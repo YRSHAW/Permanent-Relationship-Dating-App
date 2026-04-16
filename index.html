@@ -52,6 +52,10 @@ body {
   letter-spacing: 0.01em;
   text-decoration: none;
   color: var(--dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 .logo .pr { color: var(--red); }
 .topbar-right { display: flex; align-items: center; gap: 16px; }
@@ -227,7 +231,7 @@ body {
   width: 100%; max-width: 860px; margin-top: 40px;
 }
 .pivot-line { flex: 1; height: 1px; background: rgba(200,16,46,0.2); }
-.pivot-text { font-size: 13px; font-weight: 300; color: var(--red); letter-spacing: 0.08em; white-space: nowrap; }
+.pivot-text { font-size: 12px; font-weight: 300; color: var(--red); letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 90vw; }
 .pivot-sub { color: var(--red); }
 
 /* Slide transition */
@@ -524,13 +528,15 @@ footer a:hover { color: rgba(255,255,255,0.7); }
   background: rgba(250,248,246,0.95); backdrop-filter: blur(12px);
   border-top: 1px solid rgba(200,16,46,0.08);
   display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 5%; font-size: 12px;
+  gap: 12px; padding: 10px 5%; font-size: 12px;
   opacity: 0; pointer-events: none;
   transition: opacity 0.35s ease;
 }
 .sticky-bar.visible { opacity: 1; pointer-events: all; }
-.sticky-spots { font-weight: 300; color: var(--gray); }
+.sticky-spots { font-weight: 300; color: var(--gray); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sticky-spots strong { color: var(--dark); font-weight: 400; }
+.sticky-bar .filling-pill { flex-shrink: 0; white-space: nowrap; }
+.sticky-bar .btn-apply { flex-shrink: 0; }
 
 /* ── RESPONSIVE ───────────────────────────── */
 @media (max-width: 900px) {
@@ -548,12 +554,17 @@ footer a:hover { color: rgba(255,255,255,0.7); }
 }
 @media (max-width: 600px) {
   .topbar { padding: 0 4%; }
+  .logo { font-size: 1.25rem; }
   .hero { padding: 80px 4% 50px; }
   .features, .who-section, .testimonials, .apply-section { padding: 70px 4%; }
   .hero-carousel { width: 300px; }
   .hero-card-wrap { width: 300px; }
   .hero-card-area { max-width: 340px; }
   .carousel-arrows { left: -44px; right: -44px; }
+  .hero-pivot-full { padding: 0 4%; box-sizing: border-box; }
+  .pivot-line { display: none; }
+  .sticky-spots { display: none; }
+  .sticky-bar { justify-content: space-between; padding: 10px 4%; }
 }
 
 /* ── SPINNING LOADING DOTS ─── */
