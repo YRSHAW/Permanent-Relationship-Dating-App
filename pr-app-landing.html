@@ -1,0 +1,2362 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Permanent Relationship</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,400&family=Noto+Sans+TC:wght@200;300;400&family=Noto+Sans+SC:wght@200;300;400&family=Playball&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #C8102E;
+  --red-light: #f9e8eb;
+  --red-mid: #e8c0c7;
+  --bg: #FAF8F6;
+  --dark: #1a1a1a;
+  --gray: #6b6b6b;
+  --light-gray: #f0ece8;
+  --gold: #c9a84c;
+  --gold-light: #f5e8c0;
+  --white: #ffffff;
+  --font-display: 'Playball', cursive;
+  --font-body: 'Noto Sans TC', sans-serif;
+  --radius: 18px;
+  --shadow: 0 4px 30px rgba(0,0,0,0.07);
+  --shadow-hover: 0 8px 40px rgba(0,0,0,0.13);
+}
+html[lang="zh-CN"] { --font-body: 'Noto Sans SC', sans-serif; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--dark);
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── TOPBAR ─────────────────────────────────── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 60px;
+  background: rgba(250,248,246,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(200,16,46,0.08);
+}
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  color: var(--dark);
+}
+.logo .pr { color: var(--red); }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.btn-apply {
+  background: var(--red); color: #fff;
+  border: none; border-radius: 100px;
+  padding: 8px 22px; font-size: 13px;
+  font-family: var(--font-body); font-weight: 300;
+  cursor: pointer; letter-spacing: 0.04em;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-apply:hover { background: #a50c25; transform: scale(1.03); }
+
+/* Hamburger */
+.hamburger-btn {
+  background: none; border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px; width: 36px; height: 36px;
+  cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+}
+.hamburger-btn span { width: 16px; height: 1.5px; background: var(--dark); border-radius: 2px; transition: 0.2s; }
+
+/* Nav Drawer */
+.nav-drawer {
+  position: fixed; top: 0; right: -320px; width: 300px; height: 100vh;
+  background: var(--white); z-index: 200; padding: 80px 40px 40px;
+  box-shadow: -4px 0 30px rgba(0,0,0,0.1); transition: right 0.3s cubic-bezier(.4,0,.2,1);
+}
+.nav-drawer.open { right: 0; }
+.nav-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 199;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.nav-overlay.open { opacity: 1; pointer-events: all; }
+.nav-close {
+  position: absolute; top: 20px; right: 20px;
+  background: none; border: none; cursor: pointer; font-size: 22px; color: var(--gray);
+}
+.nav-links { list-style: none; }
+.nav-links li { border-bottom: 1px solid var(--light-gray); }
+.nav-links a {
+  display: block; padding: 16px 0; font-size: 14px; font-weight: 300;
+  color: var(--dark); text-decoration: none; letter-spacing: 0.03em; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--red); }
+.nav-section-title { font-size: 10px; letter-spacing: 0.15em; color: var(--gray); text-transform: uppercase; margin: 24px 0 8px; }
+
+/* Language selector in drawer */
+.lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.lang-btn {
+  background: var(--light-gray); border: none; border-radius: 8px;
+  padding: 8px 10px; font-size: 11px; font-weight: 300; cursor: pointer;
+  font-family: var(--font-body); color: var(--dark); transition: all 0.2s;
+  text-align: left;
+}
+.lang-btn:hover, .lang-btn.active { background: var(--red); color: #fff; }
+
+/* ── HERO ────────────────────────────────────── */
+.hero {
+  min-height: 100vh; padding: 100px 5% 60px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.hero-inner {
+  display: flex; align-items: center; justify-content: center; gap: 52px; width: 100%;
+}
+.hero-text { max-width: 420px; flex-shrink: 0; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--red-light); color: var(--red);
+  border-radius: 100px; padding: 5px 14px; font-size: 11px;
+  font-weight: 300; letter-spacing: 0.06em;
+}
+.hero-badge-row { margin-bottom: 28px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.filling-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(200,16,46,0.07); color: var(--red);
+  border-radius: 100px; padding: 5px 12px; font-size: 11px;
+  font-weight: 300; letter-spacing: 0.05em;
+}
+.flame { display: inline-block; animation: flameFlicker 0.9s ease-in-out infinite alternate; }
+@keyframes flameFlicker {
+  from { transform: scaleY(1) rotate(-3deg); filter: brightness(1); }
+  to   { transform: scaleY(1.18) rotate(3deg); filter: brightness(1.3); }
+}
+.filling-now-bar {
+  display: flex; justify-content: center; margin-bottom: 24px;
+}
+.filling-now-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(200,16,46,0.07); color: var(--red);
+  border-radius: 100px; padding: 5px 14px; font-size: 11px;
+  font-weight: 300; letter-spacing: 0.05em;
+}
+.hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 5vw, 4rem);
+  line-height: 1.15; font-weight: 400;
+  margin-bottom: 24px;
+}
+.hero-title .pr { color: var(--red); }
+.hero-sub { font-size: 14px; font-weight: 300; color: var(--gray); max-width: 420px; line-height: 1.75; margin-bottom: 36px; }
+.hero-sub strong { color: var(--red); font-weight: 400; }
+.hero-cta-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--red); color: #fff;
+  border: none; border-radius: 100px; padding: 13px 28px;
+  font-size: 13px; font-family: var(--font-body); font-weight: 300;
+  cursor: pointer; letter-spacing: 0.04em; transition: all 0.2s;
+}
+.btn-primary:hover { background: #a50c25; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,16,46,0.3); }
+.btn-ghost {
+  background: none; border: none; color: var(--dark);
+  font-size: 13px; font-family: var(--font-body); font-weight: 300;
+  cursor: pointer; letter-spacing: 0.04em; text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.hero-stats { display: flex; gap: 36px; margin-top: 48px; }
+.hero-stats > div { text-align: center; }
+.stat-num { font-size: 1.8rem; font-weight: 300; color: var(--dark); }
+.stat-label { font-size: 11px; color: var(--gray); font-weight: 300; letter-spacing: 0.04em; }
+
+/* Hero Card Carousel */
+.hero-card-area { display: flex; justify-content: center; align-items: center; flex-shrink: 0; position: relative; }
+.hero-carousel { position: relative; width: 360px; }
+.hero-card-wrap {
+  position: relative; width: 360px;
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+}
+.hero-card-img {
+  width: 100%; aspect-ratio: 3/4; object-fit: cover;
+  background: linear-gradient(135deg, #f0ece8 0%, #e8c0c7 100%);
+  position: relative; overflow: hidden;
+}
+.hero-card-placeholder {
+  width: 100%; aspect-ratio: 3/4;
+  background: linear-gradient(160deg, #f5e8eb 0%, #e8c5cc 50%, #d4a0ab 100%);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  position: relative;
+}
+.person-silhouette {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 75%; height: 80%;
+  background: linear-gradient(180deg, rgba(180,130,140,0.4) 0%, rgba(140,90,100,0.6) 100%);
+  border-radius: 50% 50% 0 0;
+}
+.hero-card-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+  padding: 28px 20px 20px; color: #fff;
+}
+.hero-card-name { font-size: 1.3rem; font-weight: 300; margin-bottom: 6px; }
+.hero-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.tag-verified { background: #2d9e6b; color: #fff; font-size: 10px; padding: 3px 9px; border-radius: 100px; font-weight: 300; }
+.tag-stability { background: #c9a84c; color: #fff; font-size: 10px; padding: 3px 9px; border-radius: 100px; font-weight: 300; }
+.hero-card-info { font-size: 11px; color: rgba(255,255,255,0.8); display: flex; gap: 10px; flex-wrap: wrap; }
+.hero-card-tap { position: absolute; top: 14px; right: 14px; font-size: 10px; color: rgba(255,255,255,0.7); }
+.carousel-arrows { display: flex; justify-content: space-between; position: absolute; top: 50%; left: -52px; right: -52px; transform: translateY(-50%); pointer-events: none; }
+.c-arrow {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: white; border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  cursor: pointer; font-size: 14px; color: var(--gray); pointer-events: all;
+  transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+}
+.c-arrow:hover { background: var(--red); color: #fff; }
+.carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
+.c-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red-mid); cursor: pointer; transition: background 0.2s; }
+.c-dot.active { background: var(--red); }
+.hero-pivot-full {
+  display: flex; align-items: center; gap: 20px;
+  width: 100%; max-width: 860px; margin-top: 40px;
+}
+.pivot-line { flex: 1; height: 1px; background: rgba(200,16,46,0.2); }
+.pivot-text { font-size: 13px; font-weight: 300; color: var(--red); letter-spacing: 0.08em; white-space: nowrap; }
+.pivot-sub { color: var(--red); }
+
+/* Slide transition */
+.hero-card-wrap { overflow: hidden; }
+@keyframes slideInRight { from { transform: translateX(104%); } to { transform: translateX(0); } }
+@keyframes slideInLeft  { from { transform: translateX(-104%); } to { transform: translateX(0); } }
+.slide-in-right { animation: slideInRight 0.42s cubic-bezier(.4,0,.2,1) both !important; }
+.slide-in-left  { animation: slideInLeft  0.42s cubic-bezier(.4,0,.2,1) both !important; }
+
+/* Detail Card */
+.detail-overlay {
+  position: absolute; inset: 0; border-radius: 20px;
+  background: white; overflow: hidden;
+  transform: translateY(100%); transition: transform 0.45s cubic-bezier(.4,0,.2,1);
+  z-index: 10;
+}
+.detail-overlay.visible { transform: translateY(0); }
+
+/* ── Detail overlay redesign ── */
+.detail-header {
+  background: var(--bg);
+  border-bottom: 1px solid rgba(200,16,46,0.10);
+  padding: 16px 16px 14px;
+  position: relative;
+  display: flex; align-items: center; gap: 12px;
+}
+.detail-avatar {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #f0d8dc, #e0b0ba);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; font-weight: 300; color: #8a4a55;
+}
+.detail-header-info { flex: 1; min-width: 0; }
+.detail-person { font-size: 1rem; font-weight: 300; color: var(--dark); margin-bottom: 5px; }
+.detail-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 4px; }
+.detail-badge-verified { background: #2d9e6b; color: #fff; font-size: 9px; padding: 2px 8px; border-radius: 100px; font-weight: 300; }
+.detail-badge-stability { color: #fff; font-size: 9px; padding: 2px 8px; border-radius: 100px; font-weight: 300; }
+.detail-location { font-size: 10px; color: var(--gray); }
+.detail-close {
+  position: absolute; top: 12px; right: 12px;
+  background: var(--light-gray); border: none; border-radius: 50%;
+  width: 26px; height: 26px; cursor: pointer; font-size: 13px;
+  color: var(--gray); display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.detail-close:hover { background: var(--red-mid); color: var(--red); }
+.detail-body { padding: 10px 16px 16px; display: flex; flex-direction: column; gap: 4px; }
+.detail-section-title {
+  font-size: 8.5px; letter-spacing: 0.14em; color: var(--red);
+  text-transform: uppercase; font-weight: 400;
+  margin: 10px 0 6px; padding-bottom: 5px;
+  border-bottom: 1px solid rgba(200,16,46,0.12);
+}
+.detail-section-title:first-child { margin-top: 2px; }
+.detail-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; border-bottom: 1px solid var(--light-gray); font-size: 11.5px;
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-label { color: var(--gray); font-weight: 300; flex-shrink: 0; }
+.detail-value { font-weight: 300; text-align: right; display: flex; align-items: center; gap: 5px; }
+.detail-verified {
+  display: inline-flex; align-items: center; gap: 2px;
+  background: #2d9e6b; color: #fff;
+  font-size: 9px; font-weight: 400;
+  padding: 2px 7px; border-radius: 100px;
+  flex-shrink: 0;
+}
+
+/* Exclusive Card */
+.excl-card {
+  width: 100%; background: white; aspect-ratio: 3/4;
+  display: flex; flex-direction: column; overflow-y: auto;
+  font-family: var(--font-body);
+}
+.excl-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px 10px; font-size: 10px; color: var(--gray);
+  background: var(--bg); border-bottom: 1px solid rgba(200,16,46,0.10);
+}
+.excl-topbar-logo { font-family: var(--font-display); font-size: 0.9rem; color: var(--dark); letter-spacing: 0.01em; }
+.excl-topbar-logo .pr { color: var(--red); }
+.excl-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px 12px; border-bottom: 1px solid var(--light-gray);
+}
+.excl-avatar { width: 32px; height: 32px; border-radius: 50%; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: 300; color: white; }
+.excl-name { font-size: 14px; font-weight: 400; }
+.excl-since { font-size: 10px; color: var(--gray); }
+.excl-badge-row { padding: 10px 16px 8px; }
+.excl-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--gold); color: #a0822a; background: #fffbef;
+  border-radius: 8px; padding: 6px 12px; font-size: 10px; font-weight: 300; width: 100%;
+}
+.excl-badge-icon { font-size: 13px; }
+.excl-badge-text { flex: 1; line-height: 1.5; }
+.excl-badge-lock { font-size: 9px; color: var(--gold); margin-top: 2px; }
+.excl-progress-section { padding: 10px 16px 6px; }
+.excl-progress-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--dark); margin-bottom: 5px; font-weight: 400; }
+.excl-progress-pct { color: var(--gray); font-weight: 300; font-size: 10px; }
+.excl-progress-bar { height: 5px; background: var(--light-gray); border-radius: 3px; margin-bottom: 4px; }
+.excl-progress-fill { height: 100%; background: linear-gradient(to right, #f9a8b8, var(--red)); border-radius: 3px; transition: width 1s; }
+.excl-progress-hint { font-size: 9px; color: var(--gray); }
+.excl-stats { display: flex; gap: 8px; padding: 8px 16px 4px; }
+.excl-stat { flex: 1; text-align: center; background: var(--bg); border-radius: 8px; padding: 7px 4px; }
+.excl-stat-num { font-size: 16px; font-weight: 300; color: var(--dark); }
+.excl-stat-red { color: var(--red); }
+.excl-stat-gold { color: var(--gold); }
+.excl-stat-green { color: #2d9e6b; }
+.excl-stat-label { font-size: 9px; color: var(--gray); }
+.excl-theme-section { padding: 10px 16px; flex: 1; }
+.excl-theme-label { font-size: 9px; color: var(--red); font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+.excl-theme-q { font-size: 11px; font-weight: 400; color: var(--dark); margin-bottom: 6px; }
+.excl-theme-a { font-size: 10px; color: var(--gray); font-style: italic; line-height: 1.6; }
+
+/* Intent country hidden by default */
+.intent-country-wrap { display: none; margin-top: 4px; }
+.intent-country-wrap.visible { display: block; }
+
+/* ── FEATURES ────────────────────────────────── */
+.features {
+  padding: 100px 5%;
+  background: white;
+}
+.section-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--red); font-weight: 400; margin-bottom: 16px; }
+.section-title { font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 400; line-height: 1.25; margin-bottom: 16px; }
+.section-sub { font-size: 14px; color: var(--gray); max-width: 420px; font-weight: 300; margin-bottom: 60px; }
+
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.feature-card {
+  background: var(--bg); border-radius: var(--radius);
+  padding: 28px 24px; position: relative; overflow: hidden;
+}
+.feature-icon { font-size: 1.4rem; margin-bottom: 16px; }
+.feature-name { font-size: 1rem; font-weight: 400; margin-bottom: 8px; letter-spacing: 0.01em; }
+.feature-desc { font-size: 12px; color: var(--gray); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
+.feature-link { font-size: 12px; color: var(--red); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+
+/* Feature Demo Carousel (for each feature card) */
+.feature-demo {
+  border-radius: 12px; overflow: hidden; background: white;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07); position: relative;
+  height: 240px; /* uniform height */
+}
+.feature-demo-frame { width: 100%; height: 100%; position: relative; }
+
+/* LSI Demo */
+.lsi-demo { padding: 20px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+.lsi-title-sm { font-size: 9px; letter-spacing: 0.12em; color: var(--gray); text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+.lsi-current { text-align: center; font-size: 1.4rem; font-weight: 300; margin-bottom: 16px; transition: all 0.5s; }
+.lsi-current.gold { color: var(--gold); }
+.lsi-current.green { color: #2d9e6b; }
+.lsi-current.blue { color: #4a90d9; }
+.lsi-current.gray-c { color: #999; }
+.lsi-levels { display: flex; flex-direction: column; gap: 6px; }
+.lsi-level-row {
+  display: flex; align-items: center; gap: 10px; padding: 7px 12px;
+  border-radius: 8px; font-size: 11px; font-weight: 300; transition: all 0.4s;
+}
+.lsi-level-row.active { background: var(--gold-light); }
+.lsi-level-row.active.green-active { background: #e8f5ef; }
+.lsi-level-row.active.blue-active { background: #e8f0f9; }
+.lsi-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.lsi-level-name { flex: 1; }
+.lsi-bar-wrap { width: 60px; height: 3px; background: var(--light-gray); border-radius: 2px; }
+.lsi-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s; }
+.lsi-gold-frame {
+  position: absolute; inset: 0; border-radius: 12px;
+  box-shadow: 0 0 0 2px var(--gold) inset;
+  pointer-events: none; opacity: 0; transition: opacity 0.5s;
+}
+.lsi-gold-frame.visible { opacity: 1; animation: goldPulse 2s infinite; }
+@keyframes goldPulse { 0%,100%{box-shadow:0 0 0 2px var(--gold) inset, 0 0 12px rgba(201,168,76,0.3);} 50%{box-shadow:0 0 0 2px var(--gold) inset, 0 0 24px rgba(201,168,76,0.6);} }
+
+/* Love Diary Demo */
+.diary-demo { padding: 14px; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+.diary-header-sm { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.diary-avatars { display: flex; gap: -4px; }
+.diary-avatar { width: 24px; height: 24px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 300; border: 2px solid white; }
+.diary-names-sm { font-size: 11px; font-weight: 300; }
+.diary-days { font-size: 9px; color: var(--gray); }
+.diary-stats { display: flex; gap: 8px; margin-bottom: 10px; }
+.diary-stat { text-align: center; flex: 1; background: var(--light-gray); border-radius: 8px; padding: 6px 4px; }
+.diary-stat-num { font-size: 14px; font-weight: 300; color: var(--red); transition: all 0.4s; }
+.diary-stat-label { font-size: 9px; color: var(--gray); }
+.diary-warmth { margin-bottom: 8px; }
+.diary-warmth-label { font-size: 9px; color: var(--gray); margin-bottom: 4px; display: flex; justify-content: space-between; }
+.diary-warmth-bar { height: 3px; background: var(--light-gray); border-radius: 2px; }
+.diary-warmth-fill { height: 100%; background: linear-gradient(to right, #f9a8b8, var(--red)); border-radius: 2px; transition: width 0.8s; }
+.diary-timeline { flex: 1; overflow: hidden; }
+.diary-event { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--light-gray); font-size: 10px; }
+.diary-event-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); margin-top: 3px; flex-shrink: 0; }
+.diary-event-content { flex: 1; }
+.diary-event-title { font-weight: 300; }
+.diary-event-date { color: var(--gray); font-size: 9px; }
+.diary-comment { font-size: 9px; color: var(--red); margin-top: 2px; }
+
+/* Report Demo */
+.report-demo { padding: 16px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+.report-title-sm { font-size: 11px; font-weight: 300; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+.report-progress-pct { font-size: 11px; color: var(--gray); }
+.report-bar-wrap { height: 4px; background: var(--light-gray); border-radius: 2px; margin-bottom: 16px; }
+.report-bar { height: 100%; background: linear-gradient(to right, var(--red-mid), var(--red)); border-radius: 2px; transition: width 1s; }
+.report-steps { display: flex; flex-direction: column; gap: 8px; }
+.report-step { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 300; }
+.step-icon { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0; }
+.step-done { background: #e8f5ef; color: #2d9e6b; }
+.step-loading { background: var(--red-light); color: var(--red); }
+.step-pending { background: var(--light-gray); color: var(--gray); }
+.report-preview {
+  margin-top: 12px; padding: 10px 12px; background: var(--bg);
+  border-radius: 8px; font-size: 9px; color: var(--gray);
+  border: 1px dashed var(--red-mid); display: none;
+}
+.report-preview.visible { display: block; }
+.report-preview-title { font-size: 10px; font-weight: 300; color: var(--dark); margin-bottom: 4px; }
+
+/* ── WHO THIS IS FOR ─────────────────────────── */
+.who-section {
+  padding: 100px 5%; background: #141414;
+  color: white;
+}
+.who-label { color: var(--red); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 400; margin-bottom: 16px; }
+.who-title { font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 400; line-height: 1.25; margin-bottom: 48px; }
+.who-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.who-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); padding: 28px; }
+.who-card-title { font-size: 14px; font-weight: 400; margin-bottom: 12px; }
+.who-card-desc { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 300; line-height: 1.8; margin-bottom: 16px; }
+.who-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.who-tag { border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.6); border-radius: 100px; padding: 4px 12px; font-size: 11px; font-weight: 300; }
+
+/* ── TESTIMONIALS ────────────────────────────── */
+.testimonials { padding: 100px 5%; background: var(--bg); }
+.test-label { text-align: center; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--red); font-weight: 400; margin-bottom: 16px; }
+.test-title { text-align: center; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 400; margin-bottom: 52px; }
+.test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.test-card { background: white; border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); }
+.stars { color: #f0b429; font-size: 13px; margin-bottom: 14px; letter-spacing: 2px; }
+.test-quote { font-size: 13px; font-weight: 300; line-height: 1.8; color: var(--dark); margin-bottom: 18px; font-style: italic; }
+.test-person { display: flex; align-items: center; gap: 12px; }
+.test-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 300; color: white; }
+.test-name { font-size: 13px; font-weight: 300; }
+.test-info { font-size: 11px; color: var(--gray); }
+
+/* ── APPLY SECTION ───────────────────────────── */
+.apply-section { padding: 100px 5%; }
+.apply-center { max-width: 540px; margin: 0 auto; text-align: center; }
+.apply-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--red-light); color: var(--red); border-radius: 100px;
+  padding: 5px 16px; font-size: 11px; font-weight: 300;
+  letter-spacing: 0.06em; margin-bottom: 28px;
+}
+.apply-title { font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 400; line-height: 1.25; margin-bottom: 16px; }
+.apply-sub { font-size: 13px; color: var(--gray); font-weight: 300; margin-bottom: 40px; line-height: 1.8; }
+.apply-form { display: flex; flex-direction: column; gap: 28px; }
+#formStep1, #formStep2 { display: flex; flex-direction: column; gap: 20px; max-width: 540px; margin: 0 auto; width: 100%; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-input, .form-select {
+  width: 100%; padding: 18px 20px; border: 1px solid #e0dbd5;
+  border-radius: 14px; font-size: 14px; font-family: var(--font-body); font-weight: 300;
+  background: white; color: var(--dark); outline: none; transition: border 0.2s;
+  box-sizing: border-box;
+}
+.form-input.error, .form-select.error { border-color: var(--red); }
+.form-error-msg { font-size: 11px; color: var(--red); font-weight: 300; text-align: center; margin-top: -6px; letter-spacing: 0.03em; display: none; }
+.form-error-msg.visible { display: block; }
+.form-input:focus, .form-select:focus { border-color: var(--red); }
+.form-select { appearance: none; cursor: pointer; }
+.intent-row { display: flex; align-items: center; gap: 16px; font-size: 13px; font-weight: 300; color: var(--gray); padding: 8px 0; }
+.intent-row input[type=radio] { accent-color: var(--red); }
+.btn-submit {
+  background: var(--red); color: white; border: none; border-radius: 100px;
+  padding: 16px; font-size: 13px; font-family: var(--font-body); font-weight: 300;
+  cursor: pointer; letter-spacing: 0.04em; width: 100%; transition: all 0.2s; margin-top: 12px;
+}
+.btn-submit:hover { background: #a50c25; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(200,16,46,0.3); }
+.form-disclaimer { text-align: center; font-size: 11px; color: var(--gray); font-weight: 300; margin-top: 10px; letter-spacing: 0.03em; }
+.form-step2-hint { font-size: 12px; color: var(--gray); font-weight: 300; text-align: center; margin-bottom: 16px; letter-spacing: 0.03em; }
+
+/* ── FOOTER ──────────────────────────────────── */
+footer {
+  background: #141414; color: rgba(255,255,255,0.45);
+  padding: 28px 5%; display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; font-weight: 300; flex-wrap: wrap; gap: 12px;
+}
+footer a { color: rgba(255,255,255,0.45); text-decoration: none; }
+footer a:hover { color: rgba(255,255,255,0.7); }
+
+/* Sticky footer bar */
+.sticky-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+  background: rgba(250,248,246,0.95); backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(200,16,46,0.08);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 5%; font-size: 12px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.sticky-bar.visible { opacity: 1; pointer-events: all; }
+.sticky-spots { font-weight: 300; color: var(--gray); }
+.sticky-spots strong { color: var(--dark); font-weight: 400; }
+
+/* ── RESPONSIVE ───────────────────────────── */
+@media (max-width: 900px) {
+  .hero { flex-direction: column; align-items: center; padding: 90px 5% 60px; gap: 40px; text-align: center; }
+  .hero-inner { flex-direction: column; }
+  .hero-text { max-width: 100%; }
+  .hero-cta-row { justify-content: center; }
+  .hero-stats { justify-content: center; }
+  .hero-card-area { width: 100%; }
+  .hero-pivot-full { margin-top: 24px; }
+  .features-grid { grid-template-columns: 1fr; gap: 20px; }
+  .who-cards { grid-template-columns: 1fr; }
+  .test-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .topbar { padding: 0 4%; }
+  .hero { padding: 80px 4% 50px; }
+  .features, .who-section, .testimonials, .apply-section { padding: 70px 4%; }
+  .hero-carousel { width: 300px; }
+  .hero-card-wrap { width: 300px; }
+  .hero-card-area { max-width: 340px; }
+  .carousel-arrows { left: -44px; right: -44px; }
+}
+
+/* ── SPINNING LOADING DOTS ─── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { width: 12px; height: 12px; border: 2px solid var(--red-light); border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+/* Transitions */
+.fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.6s, transform 0.6s; }
+.fade-in.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV OVERLAY -->
+<div class="nav-overlay" id="navOverlay" onclick="closeNav()"></div>
+
+<!-- NAV DRAWER -->
+<nav class="nav-drawer" id="navDrawer">
+  <button class="nav-close" onclick="closeNav()">✕</button>
+  <ul class="nav-links">
+    <li><a href="#features" onclick="closeNav()" data-i18n="nav_features">Features</a></li>
+    <li><a href="#who" onclick="closeNav()" data-i18n="nav_who">Who It's For</a></li>
+    <li><a href="#apply" onclick="closeNav()" data-i18n="nav_apply">Apply for Access</a></li>
+    <li><a href="#testimonials" onclick="closeNav()" data-i18n="nav_testimonials">Reviews</a></li>
+  </ul>
+  <div class="nav-section-title" data-i18n="nav_language">Language</div>
+  <div class="lang-grid">
+    <button class="lang-btn" onclick="setLang('zh-TW')">繁體中文</button>
+    <button class="lang-btn" onclick="setLang('zh-CN')">简体中文</button>
+    <button class="lang-btn active" onclick="setLang('en')">English</button>
+    <button class="lang-btn" onclick="setLang('ja')">日本語</button>
+    <button class="lang-btn" onclick="setLang('ko')">한국어</button>
+    <button class="lang-btn" onclick="setLang('vi')">Tiếng Việt</button>
+    <button class="lang-btn" onclick="setLang('th')">ภาษาไทย</button>
+    <button class="lang-btn" onclick="setLang('id')">Bahasa</button>
+    <button class="lang-btn" onclick="setLang('es')">Español</button>
+    <button class="lang-btn" onclick="setLang('fr')">Français</button>
+  </div>
+</nav>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="#" class="logo"><span class="pr">P</span>ermanent <span class="pr">R</span>elationship</a>
+  <div class="topbar-right">
+    <button class="btn-apply" onclick="document.getElementById('apply').scrollIntoView({behavior:'smooth'})" data-i18n="apply_btn">Apply</button>
+    <button class="hamburger-btn" onclick="openNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+<div class="hero-inner">
+  <div class="hero-text fade-in">
+    <div class="hero-badge-row">
+      <div class="hero-badge" data-i18n="hero_badge">Early Access Open · First 300 Members</div>
+      <span class="filling-pill"><span class="flame">🔥</span><span id="fillingHero">47</span><span data-i18n="filling_now"> 人正在填寫</span></span>
+    </div>
+    <h1 class="hero-title">
+      <span class="pr">P</span>ermanent<br>
+      <span class="pr">R</span>elationship
+    </h1>
+    <p class="hero-sub" data-i18n="hero_sub">
+      我們不相信用身份定義一個人的價值。<br>但我們相信，兩個人在一起之前，應該對彼此的未來誠實。<br>PR APP 用真實驗證的資料，從相識、交往，到婚姻與移民——<br>每一步，都有我們。
+    </p>
+    <div class="hero-cta-row">
+      <button class="btn-primary" onclick="document.getElementById('apply').scrollIntoView({behavior:'smooth'})" data-i18n="hero_cta">成為創始會員 →</button>
+      <button class="btn-ghost" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})" data-i18n="hero_learn">了解更多</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">300</div><div class="stat-label" data-i18n="stat_spots">創始會員席位</div></div>
+      <div><div class="stat-num">3</div><div class="stat-label" data-i18n="stat_cities">城市首發</div></div>
+      <div><div class="stat-num">100%</div><div class="stat-label" data-i18n="stat_verified">真實驗證</div></div>
+    </div>
+  </div>
+
+  <!-- Hero Carousel -->
+  <div class="hero-card-area fade-in">
+    <div class="hero-carousel">
+      <div style="position:relative;">
+        <!-- Card Wrap -->
+        <div class="hero-card-wrap" id="heroCardWrap">
+          <!-- Profile cards injected by JS -->
+          <div id="heroCardContainer" style="position:relative;"></div>
+          <!-- Detail overlay -->
+          <div class="detail-overlay" id="detailOverlay">
+            <div class="detail-header" id="detailHeader">
+              <div class="detail-avatar" id="detailAvatar">D</div>
+              <div class="detail-header-info">
+                <div class="detail-person" id="detailName"></div>
+                <div class="detail-badges" id="detailBadges"></div>
+                <div class="detail-location" id="detailLocation"></div>
+              </div>
+              <button class="detail-close" onclick="hideDetail()" data-i18n="detail_close">✕</button>
+            </div>
+            <div class="detail-body" id="detailBody"></div>
+          </div>
+        </div>
+        <div class="carousel-arrows">
+          <button class="c-arrow" onclick="heroNav(-1)">‹</button>
+          <button class="c-arrow" onclick="heroNav(1)">›</button>
+        </div>
+      </div>
+      <div class="carousel-dots" id="heroDots"></div>
+      <div id="heroCardSub" style="text-align:center;font-size:11px;color:var(--gray);font-weight:300;letter-spacing:0.04em;margin-top:10px;min-height:16px;transition:opacity 0.3s;"></div>
+    </div>
+  </div>
+</div><!-- /hero-inner -->
+<div class="hero-pivot-full" id="heroPivot">
+  <span class="pivot-line"></span>
+  <span class="pivot-text"><span class="pr">Use PR, Find PR</span> &nbsp;<span class="pivot-sub" data-i18n="pivot_sub">給認真規劃未來的你</span></span>
+  <span class="pivot-line"></span>
+</div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="fade-in">
+    <div class="section-label" data-i18n="feat_label">Three Features No Competitor Has</div>
+    <h2 class="section-title" data-i18n="feat_title">我們不只是交友軟體<br>我們整合了移民現實</h2>
+    <p class="section-sub" data-i18n="feat_sub">每一個功能都是為了讓跨國關係更真實、更有保障而設計。</p>
+  </div>
+  <div class="features-grid">
+
+    <!-- LSI Card -->
+    <div class="feature-card fade-in">
+      <div class="feature-icon">⚖️</div>
+      <div class="feature-name" data-i18n="lsi_name">LSI 生活穩定指數</div>
+      <div class="feature-desc" data-i18n="lsi_desc">將簽證狀態、收入、學歷與驗證整合為透明分數，讓你一眼看出真正相容的對象。</div>
+      <a href="#" class="feature-link" data-i18n="lsi_link">專屬演算法 →</a>
+      <div class="feature-demo" id="lsiDemo" style="margin-top:20px;">
+        <div style="position:relative; height:100%;">
+          <div class="lsi-demo" id="lsiContent">
+            <div class="lsi-title-sm" data-i18n="lsi_level">LSI LEVEL</div>
+            <div class="lsi-current gray-c" id="lsiCurrent" data-i18n="lsi_start">剛開始建立</div>
+            <div class="lsi-levels" id="lsiLevels">
+              <div class="lsi-level-row active blue-active" id="lsiRow0">
+                <div class="lsi-dot" style="background:#a0b8d8;"></div>
+                <div class="lsi-level-name" data-i18n="lsi_l1">剛開始建立</div>
+                <div class="lsi-bar-wrap"><div class="lsi-bar-fill" style="width:20%;background:#a0b8d8;"></div></div>
+              </div>
+              <div class="lsi-level-row" id="lsiRow1">
+                <div class="lsi-dot" style="background:#4a90d9;"></div>
+                <div class="lsi-level-name" data-i18n="lsi_l2">發展中</div>
+                <div class="lsi-bar-wrap"><div class="lsi-bar-fill" style="width:0%;background:#4a90d9;" id="lsiBar1"></div></div>
+              </div>
+              <div class="lsi-level-row" id="lsiRow2">
+                <div class="lsi-dot" style="background:#2d9e6b;"></div>
+                <div class="lsi-level-name" data-i18n="lsi_l3">穩定</div>
+                <div class="lsi-bar-wrap"><div class="lsi-bar-fill" style="width:0%;background:#2d9e6b;" id="lsiBar2"></div></div>
+              </div>
+              <div class="lsi-level-row" id="lsiRow3">
+                <div class="lsi-dot" style="background:var(--gold);"></div>
+                <div class="lsi-level-name" data-i18n="lsi_l4">高穩定</div>
+                <div class="lsi-bar-wrap"><div class="lsi-bar-fill" style="width:0%;background:var(--gold);" id="lsiBar3"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="lsi-gold-frame" id="lsiGoldFrame"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Love Diary Card -->
+    <div class="feature-card fade-in">
+      <div class="feature-icon">📖</div>
+      <div class="feature-name" data-i18n="diary_name">戀愛日記</div>
+      <div class="feature-desc" data-i18n="diary_desc">共同時間軸、每週主題、相簿、關係里程碑──你們的故事不只停留在聊天視窗裡。</div>
+      <a href="#" class="feature-link" data-i18n="diary_link">共同經營 →</a>
+      <div class="feature-demo" style="margin-top:20px;">
+        <div class="diary-demo" id="diaryDemo">
+          <div class="diary-header-sm">
+            <div class="diary-avatars">
+              <div class="diary-avatar" style="background:#e8c5cc;">D</div>
+              <div class="diary-avatar" style="background:#4a90d9;margin-left:-6px;">M</div>
+            </div>
+            <div>
+              <div class="diary-names-sm">Derek &amp; Mia</div>
+              <div class="diary-days" id="diaryDays" data-i18n="diary_days">交往 44 天</div>
+            </div>
+          </div>
+          <div class="diary-stats">
+            <div class="diary-stat">
+              <div class="diary-stat-num" id="diaryThemes">2</div>
+              <div class="diary-stat-label" data-i18n="diary_themes">主題</div>
+            </div>
+            <div class="diary-stat">
+              <div class="diary-stat-num" id="diaryPhotos">3</div>
+              <div class="diary-stat-label" data-i18n="diary_photos">照片</div>
+            </div>
+            <div class="diary-stat">
+              <div class="diary-stat-num" id="diaryTasks">1</div>
+              <div class="diary-stat-label" data-i18n="diary_tasks">任務</div>
+            </div>
+          </div>
+          <div class="diary-warmth">
+            <div class="diary-warmth-label">
+              <span data-i18n="diary_warmth">關係溫度</span>
+              <span id="diaryWarmthPct">20%</span>
+            </div>
+            <div class="diary-warmth-bar"><div class="diary-warmth-fill" id="diaryWarmth" style="width:20%;"></div></div>
+          </div>
+          <div class="diary-timeline" id="diaryTimeline">
+            <div class="diary-event">
+              <div class="diary-event-dot"></div>
+              <div class="diary-event-content">
+                <div class="diary-event-title" data-i18n="diary_ev1">配對成功</div>
+                <div class="diary-event-date">2026-03-01</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Card -->
+    <div class="feature-card fade-in">
+      <div class="feature-icon">📄</div>
+      <div class="feature-name" data-i18n="report_name">PDF 移民佐證報告</div>
+      <div class="feature-desc" data-i18n="report_desc">一鍵生成官方關係報告，符合 USCIS 標準，可直接用於 I-130 配偶簽證或澳洲 Partner Visa 申請。</div>
+      <a href="#" class="feature-link" data-i18n="report_link">唯一工具 →</a>
+      <div class="feature-demo" style="margin-top:20px;">
+        <div class="report-demo">
+          <div class="report-title-sm">
+            <span data-i18n="report_gen">PDF 移民佐證報告</span>
+            <span class="report-progress-pct" id="reportPct">0%</span>
+          </div>
+          <div class="report-bar-wrap"><div class="report-bar" id="reportBar" style="width:0%;"></div></div>
+          <div class="report-steps" id="reportSteps">
+            <div class="report-step">
+              <div class="step-icon step-pending" id="rStep0">○</div>
+              <span data-i18n="rStep0">讀取關係紀錄</span>
+            </div>
+            <div class="report-step">
+              <div class="step-icon step-pending" id="rStep1">○</div>
+              <span data-i18n="rStep1">驗證身份文件</span>
+            </div>
+            <div class="report-step">
+              <div class="step-icon step-pending" id="rStep2">○</div>
+              <span data-i18n="rStep2">整合時間軸事件</span>
+            </div>
+            <div class="report-step">
+              <div class="step-icon step-pending" id="rStep3">○</div>
+              <span data-i18n="rStep3">生成 PDF 文件</span>
+            </div>
+          </div>
+          <div class="report-preview" id="reportPreview">
+            <div class="report-preview-title">✅ <span data-i18n="report_ready">報告已完成 · 符合 USCIS 標準</span></div>
+            <div style="font-size:9px;color:var(--gray);" data-i18n="report_includes">包含：封面 · 時間軸 · 主題問答 · 照片紀錄</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="who-section" id="who">
+  <div class="who-label" data-i18n="who_label">Who This Is For</div>
+  <h2 class="who-title" data-i18n="who_title">認真的人<br>值得認真的工具</h2>
+  <div class="who-cards">
+    <div class="who-card fade-in">
+      <div class="who-card-title" data-i18n="who1_title">在美或澳有身份的你</div>
+      <div class="who-card-desc" data-i18n="who1_desc">持有 H1B、綠卡或公民身份，正在尋找文化相容、未來規劃一致的長期伴侶。你的穩定性在其他軟體是隱形的──在這裡，它是你最大的優勢。</div>
+      <div class="who-tags">
+        <span class="who-tag">H1B</span>
+        <span class="who-tag">GC</span>
+        <span class="who-tag">US Citizen</span>
+        <span class="who-tag">AU PR</span>
+      </div>
+    </div>
+    <div class="who-card fade-in">
+      <div class="who-card-title" data-i18n="who2_title">認真規劃未來的你</div>
+      <div class="who-card-desc" data-i18n="who2_desc">無論身在何處，你正在考慮在海外建立長期的生活。你不是在找捷徑，你想要找到真正相容的人，一起走得長遠。</div>
+      <div class="who-tags">
+        <span class="who-tag">F1 / OPT</span>
+        <span class="who-tag">US Worker</span>
+        <span class="who-tag" data-i18n="tag_overseas">海外華人</span>
+        <span class="who-tag" data-i18n="tag_abroad">計畫移居</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="test-label" data-i18n="test_label">What Users Say</div>
+  <h2 class="test-title" data-i18n="test_title">他們在這裡找到了</h2>
+  <div class="test-grid">
+    <div class="test-card fade-in">
+      <div class="stars">★★★★★</div>
+      <div class="test-quote" data-i18n="test1_quote">「終於有個地方不需要解釋什麼是 H1B 或 I-140。對方看到我的資料就已經懂了。」</div>
+      <div class="test-person">
+        <div class="test-avatar" style="background:#C8102E;">D</div>
+        <div>
+          <div class="test-name">Derek C.</div>
+          <div class="test-info" data-i18n="test1_info">軟體工程師 · 灣區 · H1B</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-card fade-in">
+      <div class="stars">★★★★★</div>
+      <div class="test-quote" data-i18n="test2_quote">「戀愛日記讓我們的關係紀錄非常完整。律師說我們的 I-130 佐證材料是他見過最完整的之一。」</div>
+      <div class="test-person">
+        <div class="test-avatar" style="background:#5c6bc0;">M</div>
+        <div>
+          <div class="test-name">Michelle L.</div>
+          <div class="test-info" data-i18n="test2_info">產品經理 · 西雅圖 · GC</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-card fade-in">
+      <div class="stars">★★★★★</div>
+      <div class="test-quote" data-i18n="test3_quote">「在台灣很難從其他軟體找到在美有身份的人。這裡的配對邏輯完全不一樣，第一個月就找到了。」</div>
+      <div class="test-person">
+        <div class="test-avatar" style="background:#2d9e6b;">S</div>
+        <div>
+          <div class="test-name">Sophie W.</div>
+          <div class="test-info" data-i18n="test3_info">設計師 · 台北 · 計劃赴美</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLY -->
+<section class="apply-section" id="apply">
+  <div class="apply-center">
+    <div class="apply-badge">
+      <span data-i18n="apply_badge">53 Applications Received · 247 Spots Remaining</span>
+    </div>
+    <div class="filling-now-bar"><span class="filling-now-badge"><span class="flame">🔥</span><span id="fillingApply">47</span><span data-i18n="filling_now"> 人正在填寫</span></span></div>
+    <h2 class="apply-title" data-i18n="apply_title">300 個位置<br>留給認真的人</h2>
+    <p class="apply-sub" data-i18n="apply_sub">僅限邀請的早期訪問。填寫資料後，通過審核將收到邀請碼。創始會員享有鎖定優惠價格與優先配對。</p>
+    <div class="apply-form">
+      <!-- Step 1 -->
+      <div id="formStep1">
+        <div class="form-row">
+          <input class="form-input" type="text" placeholder="Your Name" data-placeholder="form_name">
+          <input class="form-input" type="email" placeholder="Email" data-placeholder="form_email">
+        </div>
+        <select class="form-select" data-placeholder="form_city">
+          <option value="" data-i18n="form_city">Current City</option>
+          <option>San Francisco</option><option>New York</option><option>Los Angeles</option>
+          <option>Seattle</option><option>Austin</option><option>Sydney</option>
+          <option>Melbourne</option><option>Taipei</option><option data-i18n="form_other3">其他</option>
+        </select>
+        <p class="form-error-msg" id="step1Error" data-i18n="form_error">請填寫所有欄位。</p>
+        <button class="btn-submit" id="btnStep1" data-i18n="form_next">繼續 →</button>
+      </div>
+      <!-- Step 2 -->
+      <div id="formStep2" style="display:none;">
+        <p class="form-step2-hint" data-i18n="form_step2_hint">最後兩個問題，幫助我們為你配對更準確。</p>
+        <select class="form-select" id="visaSelect" data-placeholder="form_visa">
+          <option value="" data-i18n="form_visa">目前居住地的簽證狀態</option>
+          <option value="citizen" data-i18n="form_visa_citizen">公民</option>
+          <option value="longterm" data-i18n="form_visa_longterm">長期工作簽證</option>
+          <option value="shortterm" data-i18n="form_visa_shortterm">短期工作授權</option>
+          <option value="student" data-i18n="form_visa_student">學生/短期簽證</option>
+        </select>
+        <div class="intent-row">
+          <span data-i18n="form_intent">Immigration Intent</span>
+          <label><input type="radio" name="intent" value="yes" onchange="toggleIntentCountry(this)"> <span data-i18n="form_yes">Yes</span></label>
+          <label><input type="radio" name="intent" value="no" onchange="toggleIntentCountry(this)"> <span data-i18n="form_no">No</span></label>
+        </div>
+        <div class="intent-country-wrap" id="intentCountryWrap">
+          <select class="form-select" id="intentCountrySelect" data-placeholder="form_intent_country">
+            <option value="" data-i18n="form_intent_country">意向移民目的地</option>
+            <option value="us" data-i18n="form_country_us">美國 / United States</option>
+            <option value="au" data-i18n="form_country_au">澳洲 / Australia</option>
+            <option value="ca" data-i18n="form_country_ca">加拿大 / Canada</option>
+            <option value="uk" data-i18n="form_country_uk">英國 / United Kingdom</option>
+            <option value="other" data-i18n="form_other">其他</option>
+          </select>
+        </div>
+        <p class="form-error-msg" id="step2Error" data-i18n="form_error">請填寫所有欄位。</p>
+        <button class="btn-submit" id="btnStep2" data-i18n="form_submit">申請成為創始會員 →</button>
+        <p class="form-disclaimer" data-i18n="form_disclaimer">審核後以 email 通知，申請不代表立即付費。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 <a href="#">Permanent Relationship</a></span>
+  <span>
+    <a href="#" data-i18n="footer_privacy">Privacy Policy</a> ·
+    <a href="#" data-i18n="footer_terms">Terms of Service</a>
+  </span>
+</footer>
+
+<!-- STICKY BAR -->
+<div class="sticky-bar">
+  <span class="sticky-spots"><strong>247</strong> <span data-i18n="sticky_spots">Spots Remaining · Founding Member Slots</span></span>
+  <span class="filling-pill"><span class="flame">🔥</span><span id="fillingSticky">47</span><span data-i18n="filling_now"> 人正在填寫</span></span>
+  <button class="btn-apply" onclick="document.getElementById('apply').scrollIntoView({behavior:'smooth'})" data-i18n="apply_btn">Apply</button>
+</div>
+
+<script>
+// ── i18n ─────────────────────────────────────────────────────────
+const translations = {
+  'zh-TW': {
+    nav_features:'功能介紹', nav_who:'適合對象', nav_apply:'申請入會', nav_testimonials:'用戶評價',
+    nav_language:'語言選擇', apply_btn:'申請',
+    hero_badge:'早期訪問開放 · 前 300 位會員',
+    pivot_sub:'給認真規劃未來的你',
+    hero_sub:'我們不相信用身份定義一個人的價值。<br>但我們相信，兩個人在一起之前，應該對彼此的未來誠實。<br>PR APP 用真實驗證的資料，從相識、交往，到婚姻與移民——<br>每一步，都有我們。',
+    hero_cta:'成為創始會員 →', hero_learn:'了解更多',
+    stat_spots:'創始會員席位', stat_cities:'城市首發', stat_verified:'真實驗證',
+    feat_label:'三個競爭對手沒有的功能', feat_title:'我們不只是交友軟體<br>我們整合了移民現實',
+    feat_sub:'每一個功能都是為了讓跨國關係更真實、更有保障而設計。',
+    lsi_name:'LSI 生活穩定指數', lsi_desc:'將簽證狀態、收入、學歷與驗證整合為透明分數，讓你一眼看出真正相容的對象。',
+    lsi_link:'專屬演算法 →', lsi_level:'LSI LEVEL', lsi_start:'剛開始建立',
+    lsi_l1:'剛開始建立', lsi_l2:'發展中', lsi_l3:'穩定', lsi_l4:'高穩定',
+    diary_name:'戀愛日記', diary_desc:'共同時間軸、每週主題、相簿、關係里程碑──你們的故事不只停留在聊天視窗裡。',
+    diary_link:'共同經營 →', diary_days:'交往 44 天', diary_themes:'主題', diary_photos:'照片', diary_tasks:'任務',
+    diary_warmth:'關係溫度', diary_ev1:'配對成功', diary_ev2:'首次傳訊', diary_ev3:'一起旅行 🏕️', diary_ev4:'照片留念',
+    report_name:'PDF 移民佐證報告', report_desc:'一鍵生成官方關係報告，符合 USCIS 標準，可直接用於 I-130 配偶簽證或澳洲 Partner Visa 申請。',
+    report_link:'唯一工具 →', report_gen:'PDF 移民佐證報告', report_ready:'報告已完成 · 符合 USCIS 標準',
+    report_includes:'包含：封面 · 時間軸 · 主題問答 · 照片紀錄',
+    rStep0:'讀取關係紀錄', rStep1:'驗證身份文件', rStep2:'整合時間軸事件', rStep3:'生成 PDF 文件',
+    who_label:'適合對象', who_title:'認真的人<br>值得認真的工具',
+    who1_title:'在美或澳有身份的你', who1_desc:'持有 H1B、綠卡或公民身份，正在尋找文化相容、未來規劃一致的長期伴侶。你的穩定性在其他軟體是隱形的──在這裡，它是你最大的優勢。',
+    who2_title:'認真規劃未來的你', who2_desc:'無論身在何處，你正在考慮在海外建立長期的生活。你不是在找捷徑，你想要找到真正相容的人，一起走得長遠。',
+    tag_overseas:'海外華人', tag_abroad:'計畫移居',
+    test_label:'用戶評價', test_title:'他們在這裡找到了',
+    test1_quote:'「終於有個地方不需要解釋什麼是 H1B 或 I-140。對方看到我的資料就已經懂了。」',
+    test1_info:'軟體工程師 · 灣區 · H1B',
+    test2_quote:'「戀愛日記讓我們的關係紀錄非常完整。律師說我們的 I-130 佐證材料是他見過最完整的之一。」',
+    test2_info:'產品經理 · 西雅圖 · GC',
+    test3_quote:'「在台灣很難從其他軟體找到在美有身份的人。這裡的配對邏輯完全不一樣，第一個月就找到了。」',
+    test3_info:'設計師 · 台北 · 計劃赴美',
+    apply_badge:'已收到 53 份申請 · 剩餘 247 個名額',
+    filling_now:' 人正在填寫',
+    apply_title:'300 個位置<br>留給認真的人',
+    apply_sub:'僅限邀請的早期訪問。填寫資料後，通過審核將收到邀請碼。創始會員享有鎖定優惠價格與優先配對。',
+    form_name:'姓名', form_email:'電子郵件', form_visa:'目前居住地的簽證狀態', form_country:'目前國家', form_city:'目前城市',
+    form_visa_citizen:'公民', form_visa_longterm:'長期工作簽證', form_visa_shortterm:'短期工作授權', form_visa_student:'學生/短期簽證',
+    form_next:'繼續 →', form_step2_hint:'最後兩個問題，幫助我們為你配對更準確。', form_disclaimer:'審核後以 email 通知，申請不代表立即付費。', form_error:'請填寫所有必填欄位。',
+    form_success_title:'申請已收到', form_success_sub:'審核通過後我們會以 email 通知你。<br>感謝你成為最早一批認真的人。',
+    form_intent:'移民意向', form_yes:'是', form_no:'否', form_submit:'申請成為創始會員 →',
+    form_intent_country:'意向移民目的地',
+    form_country_us:'美國', form_country_au:'澳洲', form_country_ca:'加拿大', form_country_uk:'英國',
+    form_other:'其他', form_other2:'其他', form_other3:'其他',
+    footer_privacy:'隱私政策', footer_terms:'使用條款',
+    sticky_spots:'個剩餘名額 · 創始會員',
+    card_verified:'已驗證', card_stability:'高穩定', card_developing:'發展中', card_stable:'穩定', card_starting:'剛開始',
+    card_tap:'點擊查看完整資料', detail_close:'✕',
+    card_weekly:'本週進度', card_week_theme:'本週主題',
+    sec_work:'工作', sec_immigration:'移民資訊', sec_education:'教育',
+    detail_company:'公司', detail_title:'職稱', detail_income:'年收入',
+    detail_visa:'簽證', detail_progress:'進度',
+    detail_school:'學校', detail_degree:'學位',
+    detail_goal:'交往目的', goal_marriage:'長期婚姻',
+    exclusive_badge:'專屬關係', exclusive_note:'已進入專屬關係，其他配對已封存。', exclusive_lock:'🔓 雙方同意才能解除專屬',
+    excl_since:'自', excl_together:'已交往', excl_days:'天',
+    excl_hint:'再完成 2 個主題即可解鎖本週徽章',
+    excl_week_theme:'如果可以一起去任何地方，你想去哪？',
+    excl_week_reply:'在秋葉環繞的京都旅館吃火鍋。— Derek',
+    card_sub0:'每個人都是真實的。',
+    card_sub1:'從第一天，條件就透明。',
+    card_sub2:'找到條件對齊的人。',
+    card_sub3:'關係不只是聊天，是共同經營的故事。',
+    card_sub4:'一段關係，成為未來的最強佐證。',
+    match_success:'配對成功', match_lsi_match:'LSI 相容度', match_city:'同城市', match_visa:'簽證狀態',
+    derek_city:'加州 · Davis', derek_job:'軟體工程師', derek_progress:'I-485 已遞交',
+    mia_city:'加州 · San Jose',
+    rpt_ev2:'第一次視訊通話', rpt_ev3:'第一次見面', rpt_ev4:'30 天里程碑',
+  },
+  'zh-CN': {
+    nav_features:'功能介绍', nav_who:'适合对象', nav_apply:'申请入会', nav_testimonials:'用户评价',
+    nav_language:'语言选择', apply_btn:'申请',
+    hero_badge:'早期访问开放 · 前 300 位会员',
+    pivot_sub:'给认真规划未来的你',
+    hero_sub:'我们不相信用身份定义一个人的价值。<br>但我们相信，两个人在一起之前，应该对彼此的未来诚实。<br>PR APP 用真实验证的数据，从相识、交往，到婚姻与移民——<br>每一步，都有我们。',
+    hero_cta:'成为创始会员 →', hero_learn:'了解更多',
+    stat_spots:'创始会员席位', stat_cities:'城市首发', stat_verified:'真实验证',
+    feat_label:'三个竞争对手没有的功能', feat_title:'我们不只是交友软件<br>我们整合了移民现实',
+    feat_sub:'每一个功能都是为了让跨国关系更真实、更有保障而设计。',
+    lsi_name:'LSI 生活稳定指数', lsi_desc:'将签证状态、收入、学历与验证整合为透明分数，让你一眼看出真正兼容的对象。',
+    lsi_link:'专属算法 →', lsi_level:'LSI LEVEL', lsi_start:'刚开始建立',
+    lsi_l1:'刚开始建立', lsi_l2:'发展中', lsi_l3:'稳定', lsi_l4:'高稳定',
+    diary_name:'恋爱日记', diary_desc:'共同时间轴、每周主题、相册、关系里程碑──你们的故事不只停留在聊天窗口里。',
+    diary_link:'共同经营 →', diary_days:'交往 44 天', diary_themes:'主题', diary_photos:'照片', diary_tasks:'任务',
+    diary_warmth:'关系温度', diary_ev1:'配对成功', diary_ev2:'首次发消息', diary_ev3:'一起旅行 🏕️', diary_ev4:'照片留念',
+    report_name:'PDF 移民佐证报告', report_desc:'一键生成官方关系报告，符合 USCIS 标准，可直接用于 I-130 配偶签证或澳洲 Partner Visa 申请。',
+    report_link:'唯一工具 →', report_gen:'PDF 移民佐证报告', report_ready:'报告已完成 · 符合 USCIS 标准',
+    report_includes:'包含：封面 · 时间轴 · 主题问答 · 照片记录',
+    rStep0:'读取关系记录', rStep1:'验证身份文件', rStep2:'整合时间轴事件', rStep3:'生成 PDF 文件',
+    who_label:'适合对象', who_title:'认真的人<br>值得认真的工具',
+    who1_title:'在美或澳有身份的你', who1_desc:'持有 H1B、绿卡或公民身份，正在寻找文化兼容、未来规划一致的长期伴侣。你的稳定性在其他软件是隐形的──在这里，它是你最大的优势。',
+    who2_title:'认真规划未来的你', who2_desc:'无论身在何处，你正在考虑在海外建立长期的生活。你不是在找捷径，你想要找到真正兼容的人，一起走得长远。',
+    tag_overseas:'海外华人', tag_abroad:'计划移居',
+    test_label:'用户评价', test_title:'他们在这里找到了',
+    test1_quote:'「终于有个地方不需要解释什么是 H1B 或 I-140。对方看到我的资料就已经懂了。」',
+    test1_info:'软件工程师 · 湾区 · H1B',
+    test2_quote:'「恋爱日记让我们的关系记录非常完整。律师说我们的 I-130 佐证材料是他见过最完整的之一。」',
+    test2_info:'产品经理 · 西雅图 · GC',
+    test3_quote:'「在台湾很难从其他软件找到在美有身份的人。这里的配对逻辑完全不一样，第一个月就找到了。」',
+    test3_info:'设计师 · 台北 · 计划赴美',
+    apply_badge:'已收到 53 份申请 · 剩余 247 个名额',
+    filling_now:' 人正在填写',
+    apply_title:'300 个位置<br>留给认真的人',
+    apply_sub:'仅限邀请的早期访问。填写资料后，通过审核将收到邀请码。创始会员享有锁定优惠价格与优先配对。',
+    form_name:'姓名', form_email:'电子邮件', form_visa:'目前居住地的签证状态', form_country:'当前国家', form_city:'当前城市',
+    form_visa_citizen:'公民', form_visa_longterm:'长期工作签证', form_visa_shortterm:'短期工作授权', form_visa_student:'学生/短期签证',
+    form_next:'继续 →', form_step2_hint:'最后两个问题，帮助我们为你配对更准确。', form_disclaimer:'审核后以 email 通知，申请不代表立即付费。', form_error:'请填写所有必填字段。',
+    form_success_title:'申请已收到', form_success_sub:'审核通过后我们会以 email 通知你。<br>感谢你成为最早一批认真的人。',
+    form_intent:'移民意向', form_yes:'是', form_no:'否', form_submit:'申请成为创始会员 →',
+    form_intent_country:'意向移民目的地',
+    form_country_us:'美国', form_country_au:'澳洲', form_country_ca:'加拿大', form_country_uk:'英国',
+    form_other:'其他', form_other2:'其他', form_other3:'其他',
+    footer_privacy:'隐私政策', footer_terms:'使用条款',
+    sticky_spots:'个剩余名额 · 创始会员',
+    card_verified:'已验证', card_stability:'高稳定', card_developing:'发展中', card_stable:'稳定', card_starting:'刚开始',
+    card_tap:'点击查看完整资料', detail_close:'✕',
+    card_weekly:'本周进度', card_week_theme:'本周主题',
+    sec_work:'工作', sec_immigration:'移民信息', sec_education:'教育',
+    detail_company:'公司', detail_title:'职位', detail_income:'年收入',
+    detail_visa:'签证', detail_progress:'进度',
+    detail_school:'学校', detail_degree:'学位',
+    detail_goal:'交往目的', goal_marriage:'长期婚姻',
+    exclusive_badge:'专属关系', exclusive_note:'已进入专属关系，其他配对已封存。', exclusive_lock:'🔓 双方同意才能解除专属',
+    excl_since:'自', excl_together:'已交往', excl_days:'天',
+    excl_hint:'再完成 2 个主题即可解锁本周徽章',
+    excl_week_theme:'如果可以一起去任何地方，你想去哪？',
+    excl_week_reply:'在秋叶环绕的京都旅馆吃火锅。— Derek',
+    card_sub0:'每个人都是真实的。',
+    card_sub1:'从第一天，条件就透明。',
+    card_sub2:'找到条件对齐的人。',
+    card_sub3:'关系不只是聊天，是共同经营的故事。',
+    card_sub4:'一段关系，成为未来最强的佐证。',
+    match_success:'配对成功', match_lsi_match:'LSI 相容度', match_city:'同城市', match_visa:'签证状态',
+    derek_city:'加州 · Davis', derek_job:'软件工程师', derek_progress:'I-485 已递交',
+    mia_city:'加州 · San Jose',
+    rpt_ev2:'第一次视频通话', rpt_ev3:'第一次见面', rpt_ev4:'30 天里程碑',
+  },
+  'en': {
+    nav_features:'Features', nav_who:"Who It's For", nav_apply:'Apply', nav_testimonials:'Reviews',
+    nav_language:'Language', apply_btn:'Apply',
+    hero_badge:'Early Access Open · First 300 Members',
+    pivot_sub:'for those who are serious about the future',
+    hero_sub:'We don\'t believe your status defines your worth.<br>But we believe that before two people commit, they should be honest about their futures.<br>PR APP uses verified real data — from first connection to marriage and immigration.<br>Every step, we\'re with you.',
+    hero_cta:'Apply as Founding Member →', hero_learn:'Learn More',
+    stat_spots:'Founding Member Seats', stat_cities:'Cities at Launch', stat_verified:'Real & Verified',
+    feat_label:'Three Features No Competitor Has', feat_title:'We\'re not another dating app.<br>We integrate immigration reality.',
+    feat_sub:'Every feature is designed to make cross-border relationships more real and secure.',
+    lsi_name:'LSI Life Stability Index', lsi_desc:'Quantifies visa status, income, education, and verification into a transparent score. Find truly compatible matches at first glance.',
+    lsi_link:'Proprietary Algorithm →', lsi_level:'LSI LEVEL', lsi_start:'Just Started',
+    lsi_l1:'Just Started', lsi_l2:'Developing', lsi_l3:'Stable', lsi_l4:'Highly Stable',
+    diary_name:'Love Diary', diary_desc:'Shared timeline, weekly topics, photo albums, relationship milestones — your relationship stays documented beyond the chat window.',
+    diary_link:'Build a Relationship →', diary_days:'Together 44 days', diary_themes:'Themes', diary_photos:'Photos', diary_tasks:'Tasks',
+    diary_warmth:'Warmth', diary_ev1:'Matched', diary_ev2:'First Message', diary_ev3:'Trip Together 🏕️', diary_ev4:'Photo Memory',
+    report_name:'PDF Immigration Evidence Report', report_desc:'One-click official relationship report, USCIS-compliant, ready for I-130 spousal visa or Australia Partner Visa applications.',
+    report_link:'The Only Tool →', report_gen:'PDF Immigration Evidence Report', report_ready:'Report Complete · USCIS Compliant',
+    report_includes:'Includes: Cover · Timeline · Theme Q&A · Photo Records',
+    rStep0:'Reading relationship records', rStep1:'Verifying identity documents', rStep2:'Integrating timeline events', rStep3:'Generating PDF document',
+    who_label:"Who This Is For", who_title:'Serious People<br>Deserve Serious Tools',
+    who1_title:'You, with Status in US or AU', who1_desc:'Holding H1B, GC, or citizenship — looking for a culturally compatible, future-aligned long-term partner. Your stability is invisible on regular apps. Here, it\'s your biggest advantage.',
+    who2_title:'You, Seriously Planning Your Future', who2_desc:'Wherever you are — you\'re considering a long-term life abroad. You\'re not looking for shortcuts. You want someone truly compatible for the long run.',
+    tag_overseas:'Overseas Chinese', tag_abroad:'Planning Abroad',
+    test_label:'What Users Say', test_title:'They Found It Here',
+    test1_quote:'"Finally a place where I don\'t have to explain what H1B or I-140 means. The other person sees my profile and already gets it."',
+    test1_info:'Software Engineer · Bay Area · H1B',
+    test2_quote:'"The Love Diary made our relationship record incredibly thorough. Our lawyer said our I-130 evidence was among the most complete he\'d ever seen."',
+    test2_info:'Product Manager · Seattle · GC',
+    test3_quote:'"Hard to find US-status people on other apps from Taiwan. The matching logic here is completely different. Found a perfect match in the first month."',
+    test3_info:'Designer · Taipei · Planning to US',
+    apply_badge:'53 Applications Received · 247 Spots Remaining',
+    filling_now:' people filling now',
+    apply_title:'300 Spots<br>For the Serious Ones',
+    apply_sub:'Invite-only early access. Fill in your info and we\'ll send an invite code if approved. Founding members get locked-in pricing and priority matching.',
+    form_name:'Your Name', form_email:'Email', form_visa:'Current Visa Status in Your Country of Residence', form_country:'Current Country', form_city:'Current City',
+    form_visa_citizen:'Citizen', form_visa_longterm:'Long-term Work Visa', form_visa_shortterm:'Short-term Work Authorization', form_visa_student:'Student / Short-stay Visa',
+    form_next:'Continue →', form_step2_hint:'Two more questions to help us match you better.', form_disclaimer:'You\'ll be notified by email. No payment required to apply.', form_error:'Please fill in all required fields.',
+    form_success_title:'Application Received', form_success_sub:'We\'ll notify you by email once reviewed.<br>Thank you for being one of the first serious ones.',
+    form_intent:'Immigration Intent', form_yes:'Yes', form_no:'No', form_submit:'Apply for Founding Member →',
+    form_intent_country:'Target Country',
+    form_country_us:'United States', form_country_au:'Australia', form_country_ca:'Canada', form_country_uk:'United Kingdom',
+    form_other:'Other', form_other2:'Other', form_other3:'Other',
+    footer_privacy:'Privacy Policy', footer_terms:'Terms of Service',
+    sticky_spots:'Spots Remaining · Founding Member Slots',
+    card_verified:'Verified', card_stability:'High Stability', card_developing:'Developing', card_stable:'Stable', card_starting:'Just Started',
+    card_tap:'Tap for full profile', detail_close:'✕',
+    card_weekly:'Weekly Progress', card_week_theme:"This Week's Theme",
+    sec_work:'Work & Income', sec_immigration:'Immigration', sec_education:'Education',
+    detail_company:'Company', detail_title:'Job Title', detail_income:'Annual Income',
+    detail_visa:'Visa Status', detail_progress:'Progress',
+    detail_school:'School', detail_degree:'Degree',
+    detail_goal:'Relationship Goal', goal_marriage:'Marriage',
+    exclusive_badge:'Exclusive', exclusive_note:'You have entered an exclusive relationship. All other matches have been archived.', exclusive_lock:'🔓 Both must agree to end exclusivity',
+    excl_since:'Since', excl_together:'Together', excl_days:'days',
+    excl_hint:'2 more topics to unlock this week\'s badge',
+    excl_week_theme:'If you could go anywhere together, where would you go?',
+    excl_week_reply:'A cozy hot pot dinner in a Kyoto inn surrounded by autumn leaves. — Derek',
+    card_sub0:'Every person is real.',
+    card_sub1:'Conditions are transparent from day one.',
+    card_sub2:'Find someone whose path aligns with yours.',
+    card_sub3:'A relationship built together, not just chatted.',
+    card_sub4:'Your relationship becomes proof of your future.',
+    match_success:'Matched', match_lsi_match:'LSI Compatibility', match_city:'Same City', match_visa:'Visa Status',
+    derek_city:'CA · Davis', derek_job:'Software Engineer', derek_progress:'I-485 Filed',
+    mia_city:'CA · San Jose',
+    rpt_ev2:'First video call', rpt_ev3:'First meeting in person', rpt_ev4:'30-day milestone',
+  },
+  'ja': {
+    apply_btn:'申請', nav_features:'機能', nav_who:'対象者', nav_apply:'申請', nav_testimonials:'レビュー', nav_language:'言語',
+    hero_badge:'早期アクセス · 先着 300 名',
+    pivot_sub:'未来を真剣に考えるあなたへ',
+    hero_sub:'ステータスで人の価値は測れない。<br>でも二人が一緒になる前に、お互いの未来に正直であるべきだと信じています。<br>PR APP は、出会いから交際、結婚・移民まで——<br>真実の検証データで、すべてのステップに寄り添います。',
+    hero_cta:'創設メンバーとして申請 →', hero_learn:'詳細を見る',
+    stat_spots:'創設メンバー席', stat_cities:'都市同時リリース', stat_verified:'本人確認済み',
+    feat_label:'競合他社にはない 3 つの機能', feat_title:'私たちは単なる出会いアプリではありません',
+    feat_sub:'すべての機能は国際的な関係をより確実にするために設計されています。',
+    lsi_name:'LSI 生活安定指数', lsi_desc:'ビザ状況・収入・学歴・認証を透明なスコアに数値化します。',
+    lsi_link:'独自アルゴリズム →', lsi_level:'LSI レベル', lsi_start:'始まったばかり',
+    lsi_l1:'始まったばかり', lsi_l2:'発展中', lsi_l3:'安定', lsi_l4:'高度に安定',
+    diary_name:'ラブダイアリー', diary_desc:'共有タイムライン・週次テーマ・アルバム・関係のマイルストーン。',
+    diary_link:'関係を育む →', diary_days:'交際 44 日', diary_themes:'テーマ', diary_photos:'写真', diary_tasks:'タスク',
+    diary_warmth:'温度', diary_ev1:'マッチング', diary_ev2:'初メッセージ', diary_ev3:'旅行 🏕️', diary_ev4:'写真の思い出',
+    report_name:'PDF 移民証拠レポート', report_desc:'ワンクリックで公式関係レポートを生成。USCIS 準拠。',
+    report_link:'唯一のツール →', report_gen:'PDF 移民証拠レポート', report_ready:'レポート完成 · USCIS 準拠',
+    report_includes:'含む：表紙 · タイムライン · Q&A · 写真記録',
+    rStep0:'関係記録の読み取り', rStep1:'身元確認書類の検証', rStep2:'タイムラインの統合', rStep3:'PDF 生成',
+    who_label:'対象者', who_title:'真剣な人には<br>真剣なツールを',
+    who1_title:'米国またはオーストラリアの在留資格をお持ちの方', who1_desc:'H1B・グリーンカード・市民権を持ち、文化的に相容れる長期パートナーを探している方。',
+    who2_title:'将来を真剣に計画している方', who2_desc:'海外での長期生活を検討しており、ショートカットではなく本当に相性の良い相手を求めている方。',
+    tag_overseas:'海外中国人', tag_abroad:'海外移住予定',
+    test_label:'ユーザーの声', test_title:'ここで見つけました',
+    test1_quote:'"H1B や I-140 を説明しなくていい場所がついに見つかりました。"',
+    test1_info:'ソフトウェアエンジニア · ベイエリア · H1B',
+    test2_quote:'"ラブダイアリーのおかげで関係記録が非常に充実しました。"',
+    test2_info:'プロダクトマネージャー · シアトル · GC',
+    test3_quote:'"台湾から米国在留資格者を見つけるのは難しかった。ここのマッチングロジックは全く違います。"',
+    test3_info:'デザイナー · 台北 · 渡航予定',
+    apply_badge:'申請 53 件受付 · 残り 247 枠',
+    filling_now:'人が入力中',
+    apply_title:'最初の 300 人の<br>真剣な方へ',
+    apply_sub:'招待制の早期アクセス。情報を入力していただくと、承認後に招待コードをお送りします。',
+    form_name:'お名前', form_email:'メールアドレス', form_visa:'現在の居住地のビザ状況', form_country:'現在の国', form_city:'現在の都市',
+    form_visa_citizen:'市民権', form_visa_longterm:'長期就労ビザ', form_visa_shortterm:'短期就労許可', form_visa_student:'学生/短期ビザ',
+    form_next:'続ける →', form_step2_hint:'あと2問、より良いマッチングのために教えてください。', form_disclaimer:'審査後メールでお知らせします。申請に費用はかかりません。', form_error:'すべての項目を入力してください。',
+    form_intent:'移民意向', form_yes:'はい', form_no:'いいえ', form_submit:'創設メンバーとして申請 →',
+    form_success_title:'申請を受け付けました', form_success_sub:'審査後、メールでご連絡します。<br>最初の真剣なメンバーとしてありがとうございます。',
+    form_intent_country:'移住希望国',
+    form_country_us:'アメリカ', form_country_au:'オーストラリア', form_country_ca:'カナダ', form_country_uk:'イギリス',
+    form_other:'その他', form_other2:'その他', form_other3:'その他',
+    footer_privacy:'プライバシーポリシー', footer_terms:'利用規約',
+    sticky_spots:'枠残り · 創設メンバー',
+    card_verified:'認証済み', card_stability:'高度に安定', card_developing:'発展中', card_stable:'安定', card_starting:'始まったばかり',
+    card_tap:'プロフィールを見る', detail_close:'✕',
+    card_weekly:'今週の進捗', card_week_theme:'今週のテーマ',
+    sec_work:'職務・収入', sec_immigration:'移民情報', sec_education:'学歴',
+    detail_company:'会社', detail_title:'役職', detail_income:'年収',
+    detail_visa:'ビザ状況', detail_progress:'進捗',
+    detail_school:'学校', detail_degree:'学位',
+    detail_goal:'交際目的', goal_marriage:'婚姻',
+    exclusive_badge:'専属', exclusive_note:'専属関係に入りました。他のマッチはアーカイブされました。', exclusive_lock:'🔓 両者の同意で解除可能',
+    excl_since:'開始', excl_together:'交際', excl_days:'日',
+    excl_hint:'あと2トピックで今週のバッジ解除',
+    excl_week_theme:'一緒にどこへでも行けるなら、どこに行きたいですか？',
+    excl_week_reply:'紅葉に囲まれた京都の旅館で鍋を食べたい。— Derek',
+    card_sub0:'すべての人は本物です。', card_sub1:'初日から条件は透明。', card_sub2:'条件が合う人を見つける。', card_sub3:'チャットだけでなく、一緒に育む関係。', card_sub4:'二人の関係が、未来への証明になる。',
+    match_success:'マッチング成立', match_lsi_match:'LSI 相性', match_city:'同じ都市', match_visa:'ビザ状況',
+    derek_city:'カリフォルニア · Davis', derek_job:'ソフトウェアエンジニア', derek_progress:'I-485 申請済',
+    mia_city:'カリフォルニア · San Jose',
+    rpt_ev2:'初回ビデオ通話', rpt_ev3:'初対面', rpt_ev4:'30日マイルストーン',
+  },
+  'ko': {
+    apply_btn:'신청', nav_features:'기능', nav_who:'대상', nav_apply:'신청', nav_testimonials:'리뷰', nav_language:'언어',
+    hero_badge:'얼리 액세스 오픈 · 선착순 300명',
+    pivot_sub:'미래를 진지하게 계획하는 당신에게',
+    hero_sub:'신분이 사람의 가치를 정의한다고 믿지 않습니다.<br>하지만 두 사람이 함께하기 전에, 서로의 미래에 솔직해야 한다고 믿습니다.<br>PR APP은 진짜 검증된 데이터로, 첫 만남부터 결혼과 이민까지——<br>모든 단계에서 함께합니다.',
+    hero_cta:'창립 멤버로 신청 →', hero_learn:'더 알아보기',
+    stat_spots:'창립 멤버 석', stat_cities:'동시 출시 도시', stat_verified:'실명 인증',
+    feat_label:'경쟁사에 없는 3가지 기능', feat_title:'우리는 단순한 데이팅 앱이 아닙니다',
+    feat_sub:'모든 기능은 국제 관계를 더 실질적으로 만들기 위해 설계되었습니다.',
+    lsi_name:'LSI 생활 안정 지수', lsi_desc:'비자 상태, 수입, 학력, 검증을 투명한 점수로 정량화합니다.',
+    lsi_link:'독점 알고리즘 →', lsi_level:'LSI 레벨', lsi_start:'시작 단계',
+    lsi_l1:'시작 단계', lsi_l2:'발전 중', lsi_l3:'안정', lsi_l4:'매우 안정',
+    diary_name:'러브 다이어리', diary_desc:'공유 타임라인, 주간 주제, 앨범, 관계 마일스톤.',
+    diary_link:'함께 키우기 →', diary_days:'44일째', diary_themes:'주제', diary_photos:'사진', diary_tasks:'과제',
+    diary_warmth:'온도', diary_ev1:'매칭 성공', diary_ev2:'첫 메시지', diary_ev3:'여행 🏕️', diary_ev4:'사진 추억',
+    report_name:'PDF 이민 증거 보고서', report_desc:'원클릭 공식 관계 보고서, USCIS 준수.',
+    report_link:'유일한 도구 →', report_gen:'PDF 이민 증거 보고서', report_ready:'보고서 완성 · USCIS 준수',
+    report_includes:'포함: 표지 · 타임라인 · Q&A · 사진 기록',
+    rStep0:'관계 기록 읽기', rStep1:'신원 문서 확인', rStep2:'타임라인 통합', rStep3:'PDF 생성',
+    who_label:'대상', who_title:'진지한 사람에겐<br>진지한 도구가 필요합니다',
+    who1_title:'미국 또는 호주 체류 자격이 있는 분', who1_desc:'H1B, 영주권, 시민권을 보유하고 문화적으로 호환되는 장기 파트너를 찾고 있는 분.',
+    who2_title:'미래를 진지하게 계획하는 분', who2_desc:'해외에서 장기적인 삶을 고려하고 있으며 진정으로 맞는 사람을 찾고 싶은 분.',
+    tag_overseas:'재외 중국인', tag_abroad:'해외 이민 계획',
+    test_label:'사용자 후기', test_title:'이곳에서 찾았습니다',
+    test1_quote:'"H1B나 I-140이 뭔지 설명할 필요 없는 곳이 드디어 생겼어요."',
+    test1_info:'소프트웨어 엔지니어 · 베이 에어리어 · H1B',
+    test2_quote:'"러브 다이어리 덕분에 관계 기록이 매우 풍부해졌습니다."',
+    test2_info:'프로덕트 매니저 · 시애틀 · GC',
+    test3_quote:'"대만에서 미국 체류 자격자를 찾기가 어려웠는데 여기서 첫 달에 찾았어요."',
+    test3_info:'디자이너 · 타이베이 · 미국 계획',
+    apply_badge:'신청 53건 접수 · 247자리 남음',
+    filling_now:'명 지금 작성 중',
+    apply_title:'처음 300명의<br>진지한 분들께',
+    apply_sub:'초대 전용 얼리 액세스. 정보를 입력하면 승인 후 초대 코드를 보내드립니다.',
+    form_name:'이름', form_email:'이메일', form_visa:'현재 거주지 비자 상태', form_country:'현재 국가', form_city:'현재 도시',
+    form_visa_citizen:'시민권', form_visa_longterm:'장기 취업 비자', form_visa_shortterm:'단기 취업 허가', form_visa_student:'학생/단기 비자',
+    form_next:'계속 →', form_step2_hint:'마지막 두 가지 질문으로 더 정확한 매칭을 도와드립니다.', form_disclaimer:'검토 후 이메일로 안내드립니다. 신청은 결제를 의미하지 않습니다.', form_error:'모든 필수 항목을 입력해 주세요.',
+    form_intent:'이민 의향', form_yes:'예', form_no:'아니오', form_submit:'창립 멤버로 신청 →',
+    form_success_title:'신청이 접수되었습니다', form_success_sub:'검토 후 이메일로 알려드리겠습니다.<br>가장 먼저 진지하게 참여해 주셔서 감사합니다.',
+    form_intent_country:'이민 희망 국가',
+    form_country_us:'미국', form_country_au:'호주', form_country_ca:'캐나다', form_country_uk:'영국',
+    form_other:'기타', form_other2:'기타', form_other3:'기타',
+    footer_privacy:'개인정보처리방침', footer_terms:'이용약관',
+    sticky_spots:'자리 남음 · 창립 멤버',
+    card_verified:'인증됨', card_stability:'매우 안정', card_developing:'발전 중', card_stable:'안정', card_starting:'시작 단계',
+    card_tap:'프로필 보기', detail_close:'✕',
+    card_weekly:'이번 주 진행', card_week_theme:'이번 주 주제',
+    sec_work:'직장 · 수입', sec_immigration:'이민 정보', sec_education:'학력',
+    detail_company:'회사', detail_title:'직책', detail_income:'연봉',
+    detail_visa:'비자 상태', detail_progress:'진행상황',
+    detail_school:'학교', detail_degree:'학위',
+    detail_goal:'교제 목적', goal_marriage:'결혼',
+    exclusive_badge:'독점', exclusive_note:'독점 관계에 진입했습니다. 다른 매칭은 보관되었습니다.', exclusive_lock:'🔓 양측 동의 시 해제 가능',
+    excl_since:'시작', excl_together:'교제', excl_days:'일',
+    excl_hint:'2개 주제 더 완료하면 이번 주 배지 획득',
+    excl_week_theme:'함께 어디든 갈 수 있다면, 어디에 가고 싶으세요?',
+    excl_week_reply:'단풍 둘러싸인 교토 료칸에서 전골 먹기. — Derek',
+    card_sub0:'모든 사람은 진짜입니다。', card_sub1:'첫날부터 조건은 투명합니다。', card_sub2:'조건이 맞는 사람을 찾으세요。', card_sub3:'채팅이 아닌 함께 만들어가는 관계。', card_sub4:'두 사람의 관계가 미래의 증거가 됩니다。',
+    match_success:'매칭 성공', match_lsi_match:'LSI 호환성', match_city:'같은 도시', match_visa:'비자 상태',
+    derek_city:'캘리포니아 · Davis', derek_job:'소프트웨어 엔지니어', derek_progress:'I-485 신청됨',
+    mia_city:'캘리포니아 · San Jose',
+    rpt_ev2:'첫 화상 통화', rpt_ev3:'첫 만남', rpt_ev4:'30일 마일스톤',
+  },
+  'vi': {
+    apply_btn:'Đăng ký', nav_features:'Tính năng', nav_who:'Đối tượng', nav_apply:'Đăng ký', nav_testimonials:'Đánh giá', nav_language:'Ngôn ngữ',
+    hero_badge:'Truy cập sớm · 300 thành viên đầu tiên',
+    pivot_sub:'dành cho bạn đang nghiêm túc hoạch định tương lai',
+    hero_sub:'Chúng tôi không tin rằng tư cách di trú định nghĩa giá trị con người.<br>Nhưng chúng tôi tin rằng trước khi hai người đến với nhau, họ nên trung thực về tương lai.<br>PR APP dùng dữ liệu xác minh thực tế — từ quen biết đến hôn nhân và định cư.<br>Từng bước, chúng tôi đồng hành cùng bạn.',
+    hero_cta:'Đăng ký thành viên sáng lập →', hero_learn:'Tìm hiểu thêm',
+    stat_spots:'Ghế thành viên sáng lập', stat_cities:'Thành phố đầu tiên', stat_verified:'Xác minh thực tế',
+    feat_label:'Ba tính năng đối thủ không có', feat_title:'Chúng tôi không chỉ là ứng dụng hẹn hò',
+    feat_sub:'Mỗi tính năng được thiết kế để làm cho các mối quan hệ xuyên quốc gia thực tế hơn.',
+    lsi_name:'Chỉ số ổn định cuộc sống LSI', lsi_desc:'Lượng hóa trạng thái visa, thu nhập, học vấn và xác minh thành điểm số minh bạch.',
+    lsi_link:'Thuật toán độc quyền →', lsi_level:'CẤP ĐỘ LSI', lsi_start:'Mới bắt đầu',
+    lsi_l1:'Mới bắt đầu', lsi_l2:'Đang phát triển', lsi_l3:'Ổn định', lsi_l4:'Rất ổn định',
+    diary_name:'Nhật ký tình yêu', diary_desc:'Dòng thời gian chung, chủ đề hàng tuần, album ảnh, cột mốc quan hệ.',
+    diary_link:'Cùng xây dựng →', diary_days:'44 ngày bên nhau', diary_themes:'Chủ đề', diary_photos:'Ảnh', diary_tasks:'Nhiệm vụ',
+    diary_warmth:'Nhiệt độ', diary_ev1:'Ghép đôi thành công', diary_ev2:'Tin nhắn đầu tiên', diary_ev3:'Du lịch cùng nhau 🏕️', diary_ev4:'Kỷ niệm ảnh',
+    report_name:'Báo cáo bằng chứng di cư PDF', report_desc:'Tạo báo cáo quan hệ chính thức bằng một cú nhấp, tuân thủ USCIS.',
+    report_link:'Công cụ duy nhất →', report_gen:'Báo cáo bằng chứng di cư PDF', report_ready:'Báo cáo hoàn thành · Tuân thủ USCIS',
+    report_includes:'Bao gồm: Bìa · Dòng thời gian · Q&A · Hồ sơ ảnh',
+    rStep0:'Đọc hồ sơ quan hệ', rStep1:'Xác minh tài liệu danh tính', rStep2:'Tích hợp sự kiện dòng thời gian', rStep3:'Tạo tài liệu PDF',
+    who_label:'Dành cho ai', who_title:'Người nghiêm túc<br>xứng đáng với công cụ nghiêm túc',
+    who1_title:'Bạn có tư cách tại Mỹ hoặc Úc', who1_desc:'Có H1B, thẻ xanh hoặc quốc tịch, đang tìm đối tác lâu dài tương thích về văn hóa và kế hoạch tương lai.',
+    who2_title:'Bạn đang lên kế hoạch nghiêm túc cho tương lai', who2_desc:'Bạn đang cân nhắc cuộc sống lâu dài ở nước ngoài và muốn tìm người thực sự tương thích.',
+    tag_overseas:'Hoa kiều', tag_abroad:'Kế hoạch định cư',
+    test_label:'Người dùng nói gì', test_title:'Họ đã tìm thấy ở đây',
+    test1_quote:'"Cuối cùng đã có nơi không cần giải thích H1B hay I-140 là gì."',
+    test1_info:'Kỹ sư phần mềm · Bay Area · H1B',
+    test2_quote:'"Nhật ký tình yêu làm cho hồ sơ quan hệ của chúng tôi rất đầy đủ."',
+    test2_info:'Quản lý sản phẩm · Seattle · GC',
+    test3_quote:'"Khó tìm người có tư cách Mỹ từ Đài Loan. Logic ghép đôi ở đây hoàn toàn khác."',
+    test3_info:'Nhà thiết kế · Đài Bắc · Kế hoạch đến Mỹ',
+    apply_badge:'Nhận 53 đơn · Còn 247 chỗ',
+    filling_now:' người đang điền',
+    apply_title:'300 người<br>nghiêm túc đầu tiên',
+    apply_sub:'Chỉ truy cập theo lời mời. Điền thông tin và chúng tôi sẽ gửi mã mời nếu được chấp thuận.',
+    form_name:'Họ tên', form_email:'Email', form_visa:'Tình trạng visa tại nơi cư trú', form_country:'Quốc gia hiện tại', form_city:'Thành phố hiện tại',
+    form_visa_citizen:'Công dân', form_visa_longterm:'Visa làm việc dài hạn', form_visa_shortterm:'Giấy phép làm việc ngắn hạn', form_visa_student:'Visa học sinh/ngắn hạn',
+    form_next:'Tiếp tục →', form_step2_hint:'Hai câu hỏi cuối để giúp chúng tôi ghép đôi tốt hơn.', form_disclaimer:'Chúng tôi sẽ thông báo qua email sau khi xét duyệt. Không cần thanh toán để đăng ký.', form_error:'Vui lòng điền đầy đủ tất cả các trường.',
+    form_intent:'Ý định di cư', form_yes:'Có', form_no:'Không', form_submit:'Đăng ký thành viên sáng lập →',
+    form_success_title:'Đã nhận đơn đăng ký', form_success_sub:'Chúng tôi sẽ thông báo qua email sau khi xem xét.<br>Cảm ơn bạn đã là một trong những người nghiêm túc đầu tiên.',
+    form_intent_country:'Quốc gia mục tiêu',
+    form_country_us:'Hoa Kỳ', form_country_au:'Úc', form_country_ca:'Canada', form_country_uk:'Anh',
+    form_other:'Khác', form_other2:'Khác', form_other3:'Khác',
+    footer_privacy:'Chính sách bảo mật', footer_terms:'Điều khoản dịch vụ',
+    sticky_spots:'chỗ còn lại · Thành viên sáng lập',
+    card_verified:'Đã xác minh', card_stability:'Rất ổn định', card_developing:'Đang phát triển', card_stable:'Ổn định', card_starting:'Mới bắt đầu',
+    card_tap:'Xem hồ sơ đầy đủ', detail_close:'✕',
+    card_weekly:'Tiến độ tuần này', card_week_theme:'Chủ đề tuần này',
+    sec_work:'Công việc & Thu nhập', sec_immigration:'Di trú', sec_education:'Học vấn',
+    detail_company:'Công ty', detail_title:'Chức danh', detail_income:'Thu nhập hàng năm',
+    detail_visa:'Tình trạng visa', detail_progress:'Tiến độ',
+    detail_school:'Trường', detail_degree:'Bằng cấp',
+    detail_goal:'Mục tiêu quan hệ', goal_marriage:'Hôn nhân',
+    exclusive_badge:'Độc quyền', exclusive_note:'Bạn đã vào mối quan hệ độc quyền. Các ghép đôi khác đã được lưu trữ.', exclusive_lock:'🔓 Cả hai đồng ý mới có thể kết thúc',
+    excl_since:'Từ', excl_together:'Cùng nhau', excl_days:'ngày',
+    excl_hint:'Hoàn thành thêm 2 chủ đề để mở huy hiệu tuần',
+    excl_week_theme:'Nếu có thể đi bất cứ đâu cùng nhau, bạn muốn đi đâu?',
+    excl_week_reply:'Ăn lẩu tại nhà trọ Kyoto bao quanh bởi lá thu. — Derek',
+    card_sub0:'Mỗi người đều là thật.', card_sub1:'Điều kiện minh bạch từ ngày đầu.', card_sub2:'Tìm người có hướng đi phù hợp.', card_sub3:'Mối quan hệ được xây dựng cùng nhau.', card_sub4:'Mối quan hệ của bạn là bằng chứng cho tương lai.',
+    match_success:'Ghép đôi thành công', match_lsi_match:'Tương thích LSI', match_city:'Cùng thành phố', match_visa:'Tình trạng visa',
+    derek_city:'CA · Davis', derek_job:'Kỹ sư phần mềm', derek_progress:'I-485 đã nộp',
+    mia_city:'CA · San Jose',
+    rpt_ev2:'Cuộc gọi video đầu tiên', rpt_ev3:'Gặp mặt lần đầu', rpt_ev4:'Cột mốc 30 ngày',
+  },
+  'th': {
+    apply_btn:'สมัคร', nav_features:'ฟีเจอร์', nav_who:'กลุ่มเป้าหมาย', nav_apply:'สมัคร', nav_testimonials:'รีวิว', nav_language:'ภาษา',
+    hero_badge:'เปิดให้เข้าถึงก่อน · 300 สมาชิกแรก',
+    pivot_sub:'สำหรับคุณที่วางแผนอนาคตอย่างจริงจัง',
+    hero_sub:'เราไม่เชื่อว่าสถานะกำหนดคุณค่าของคน<br>แต่เราเชื่อว่าก่อนสองคนจะมาอยู่ด้วยกัน ควรซื่อสัตย์ต่ออนาคตของกันและกัน<br>PR APP ใช้ข้อมูลที่ยืนยันแล้ว — ตั้งแต่รู้จักกัน คบหา ไปจนถึงการแต่งงานและอพยพ<br>ทุกก้าว เราอยู่เคียงข้างคุณ',
+    hero_cta:'สมัครเป็นสมาชิกผู้ก่อตั้ง →', hero_learn:'เรียนรู้เพิ่มเติม',
+    stat_spots:'ที่นั่งผู้ก่อตั้ง', stat_cities:'เมืองเปิดตัวแรก', stat_verified:'ยืนยันตัวตนจริง',
+    feat_label:'สามฟีเจอร์ที่คู่แข่งไม่มี', feat_title:'เราไม่ใช่แค่แอปหาคู่',
+    feat_sub:'ทุกฟีเจอร์ได้รับการออกแบบเพื่อทำให้ความสัมพันธ์ข้ามชาติเป็นจริงและปลอดภัยยิ่งขึ้น',
+    lsi_name:'ดัชนีความมั่นคงชีวิต LSI', lsi_desc:'วัดสถานะวีซ่า รายได้ การศึกษา และการยืนยันเป็นคะแนนที่โปร่งใส',
+    lsi_link:'อัลกอริทึมเฉพาะ →', lsi_level:'ระดับ LSI', lsi_start:'เพิ่งเริ่มต้น',
+    lsi_l1:'เพิ่งเริ่มต้น', lsi_l2:'กำลังพัฒนา', lsi_l3:'มั่นคง', lsi_l4:'มั่นคงสูง',
+    diary_name:'ไดอารี่ความรัก', diary_desc:'ไทม์ไลน์ร่วมกัน หัวข้อรายสัปดาห์ อัลบั้มรูป ไมล์สโตนความสัมพันธ์',
+    diary_link:'สร้างความสัมพันธ์ →', diary_days:'44 วันด้วยกัน', diary_themes:'หัวข้อ', diary_photos:'รูปภาพ', diary_tasks:'งาน',
+    diary_warmth:'ความอบอุ่น', diary_ev1:'จับคู่สำเร็จ', diary_ev2:'ข้อความแรก', diary_ev3:'เที่ยวด้วยกัน 🏕️', diary_ev4:'ความทรงจำรูปภาพ',
+    report_name:'รายงานหลักฐานการอพยพ PDF', report_desc:'สร้างรายงานความสัมพันธ์อย่างเป็นทางการด้วยคลิกเดียว สอดคล้องกับ USCIS',
+    report_link:'เครื่องมือเดียว →', report_gen:'รายงานหลักฐานการอพยพ PDF', report_ready:'รายงานเสร็จสมบูรณ์ · สอดคล้องกับ USCIS',
+    report_includes:'รวมถึง: ปก · ไทม์ไลน์ · Q&A · บันทึกรูปภาพ',
+    rStep0:'อ่านบันทึกความสัมพันธ์', rStep1:'ยืนยันเอกสารตัวตน', rStep2:'รวมเหตุการณ์ไทม์ไลน์', rStep3:'สร้างเอกสาร PDF',
+    who_label:'สำหรับใคร', who_title:'คนจริงจัง<br>สมควรได้เครื่องมือจริงจัง',
+    who1_title:'คุณที่มีสถานะในสหรัฐฯ หรือออสเตรเลีย', who1_desc:'มี H1B กรีนการ์ด หรือสัญชาติ กำลังหาคู่ชีวิตระยะยาวที่เข้ากันได้ทางวัฒนธรรม',
+    who2_title:'คุณที่วางแผนอนาคตอย่างจริงจัง', who2_desc:'คุณกำลังพิจารณาชีวิตในต่างประเทศระยะยาวและต้องการหาคนที่เข้ากันได้จริงๆ',
+    tag_overseas:'ชาวจีนโพ้นทะเล', tag_abroad:'วางแผนย้ายถิ่น',
+    test_label:'สิ่งที่ผู้ใช้พูด', test_title:'พวกเขาพบที่นี่',
+    test1_quote:'"ในที่สุดก็มีที่ที่ไม่ต้องอธิบายว่า H1B หรือ I-140 คืออะไร"',
+    test1_info:'วิศวกรซอฟต์แวร์ · Bay Area · H1B',
+    test2_quote:'"ไดอารี่ความรักทำให้บันทึกความสัมพันธ์ของเราครบถ้วนมาก"',
+    test2_info:'ผู้จัดการผลิตภัณฑ์ · Seattle · GC',
+    test3_quote:'"ยากที่จะหาคนมีสถานะในสหรัฐฯ จากไต้หวัน ที่นี่แตกต่างโดยสิ้นเชิง"',
+    test3_info:'นักออกแบบ · ไทเป · วางแผนไปสหรัฐฯ',
+    apply_badge:'รับ 53 ใบสมัคร · เหลือ 247 ที่นั่ง',
+    filling_now:' คนกำลังกรอก',
+    apply_title:'300 คนแรก<br>ที่จริงจัง',
+    apply_sub:'การเข้าถึงก่อนโดยเฉพาะผู้รับเชิญ กรอกข้อมูลและเราจะส่งรหัสเชิญหากได้รับการอนุมัติ',
+    form_name:'ชื่อ', form_email:'อีเมล', form_visa:'สถานะวีซ่าในประเทศที่อยู่อาศัย', form_country:'ประเทศปัจจุบัน', form_city:'เมืองปัจจุบัน',
+    form_visa_citizen:'พลเมือง', form_visa_longterm:'วีซ่าทำงานระยะยาว', form_visa_shortterm:'ใบอนุญาตทำงานระยะสั้น', form_visa_student:'วีซ่านักเรียน/ระยะสั้น',
+    form_next:'ถัดไป →', form_step2_hint:'อีกสองคำถามเพื่อช่วยให้เราจับคู่คุณได้ดียิ่งขึ้น', form_disclaimer:'เราจะแจ้งทางอีเมลหลังตรวจสอบ ไม่ต้องชำระเงินเพื่อสมัคร', form_error:'กรุณากรอกข้อมูลในทุกช่องที่จำเป็น',
+    form_intent:'ความตั้งใจอพยพ', form_yes:'ใช่', form_no:'ไม่ใช่', form_submit:'สมัครเป็นสมาชิกผู้ก่อตั้ง →',
+    form_success_title:'ได้รับใบสมัครแล้ว', form_success_sub:'เราจะแจ้งทางอีเมลหลังตรวจสอบ<br>ขอบคุณที่เป็นหนึ่งในคนที่จริงจังกลุ่มแรก',
+    form_intent_country:'ประเทศเป้าหมาย',
+    form_country_us:'สหรัฐอเมริกา', form_country_au:'ออสเตรเลีย', form_country_ca:'แคนาดา', form_country_uk:'สหราชอาณาจักร',
+    form_other:'อื่นๆ', form_other2:'อื่นๆ', form_other3:'อื่นๆ',
+    footer_privacy:'นโยบายความเป็นส่วนตัว', footer_terms:'ข้อกำหนดการใช้งาน',
+    sticky_spots:'ที่นั่งเหลืออยู่ · สมาชิกผู้ก่อตั้ง',
+    card_verified:'ยืนยันแล้ว', card_stability:'มั่นคงสูง', card_developing:'กำลังพัฒนา', card_stable:'มั่นคง', card_starting:'เพิ่งเริ่มต้น',
+    card_tap:'ดูโปรไฟล์เต็ม', detail_close:'✕',
+    card_weekly:'ความคืบหน้าสัปดาห์นี้', card_week_theme:'หัวข้อสัปดาห์นี้',
+    sec_work:'งานและรายได้', sec_immigration:'ข้อมูลการอพยพ', sec_education:'การศึกษา',
+    detail_company:'บริษัท', detail_title:'ตำแหน่ง', detail_income:'รายได้ต่อปี',
+    detail_visa:'สถานะวีซ่า', detail_progress:'ความคืบหน้า',
+    detail_school:'โรงเรียน', detail_degree:'ปริญญา',
+    detail_goal:'เป้าหมายความสัมพันธ์', goal_marriage:'การแต่งงาน',
+    exclusive_badge:'เฉพาะ', exclusive_note:'คุณเข้าสู่ความสัมพันธ์เฉพาะ การจับคู่อื่นถูกเก็บถาวรแล้ว', exclusive_lock:'🔓 ต้องได้รับความยินยอมจากทั้งสองฝ่าย',
+    excl_since:'เริ่มต้น', excl_together:'อยู่ด้วยกัน', excl_days:'วัน',
+    excl_hint:'อีก 2 หัวข้อเพื่อปลดล็อกเหรียญสัปดาห์นี้',
+    excl_week_theme:'ถ้าไปด้วยกันได้ทุกที่ อยากไปไหน?',
+    excl_week_reply:'กินหม้อไฟที่โรงแรมเรียวกังในเกียวโตท่ามกลางใบไม้แดง — Derek',
+    card_sub0:'ทุกคนเป็นของจริง', card_sub1:'เงื่อนไขโปร่งใสตั้งแต่วันแรก', card_sub2:'หาคนที่เส้นทางตรงกัน', card_sub3:'ความสัมพันธ์ที่สร้างร่วมกัน', card_sub4:'ความสัมพันธ์ของคุณคือหลักฐานแห่งอนาคต',
+    match_success:'จับคู่สำเร็จ', match_lsi_match:'ความเข้ากัน LSI', match_city:'เมืองเดียวกัน', match_visa:'สถานะวีซ่า',
+    derek_city:'CA · Davis', derek_job:'วิศวกรซอฟต์แวร์', derek_progress:'I-485 ยื่นแล้ว',
+    mia_city:'CA · San Jose',
+    rpt_ev2:'วิดีโอคอลครั้งแรก', rpt_ev3:'พบกันครั้งแรก', rpt_ev4:'หลัก 30 วัน',
+  },
+  'id': {
+    apply_btn:'Daftar', nav_features:'Fitur', nav_who:'Untuk Siapa', nav_apply:'Daftar', nav_testimonials:'Ulasan', nav_language:'Bahasa',
+    hero_badge:'Akses Awal · 300 Anggota Pertama',
+    pivot_sub:'untuk Anda yang serius merencanakan masa depan',
+    hero_sub:'Kami tidak percaya status mendefinisikan nilai seseorang.<br>Tapi kami percaya, sebelum dua orang bersama, mereka harus jujur tentang masa depan masing-masing.<br>PR APP menggunakan data terverifikasi — dari berkenalan hingga pernikahan dan imigrasi.<br>Setiap langkah, kami bersama Anda.',
+    hero_cta:'Daftar sebagai Anggota Pendiri →', hero_learn:'Pelajari Lebih Lanjut',
+    stat_spots:'Kursi Anggota Pendiri', stat_cities:'Kota Peluncuran Pertama', stat_verified:'Verifikasi Nyata',
+    feat_label:'Tiga Fitur yang Tidak Dimiliki Pesaing', feat_title:'Kami bukan sekadar aplikasi kencan',
+    feat_sub:'Setiap fitur dirancang untuk membuat hubungan lintas negara lebih nyata dan aman.',
+    lsi_name:'Indeks Stabilitas Hidup LSI', lsi_desc:'Mengkuantifikasi status visa, pendapatan, pendidikan, dan verifikasi menjadi skor transparan.',
+    lsi_link:'Algoritma Eksklusif →', lsi_level:'LEVEL LSI', lsi_start:'Baru Mulai',
+    lsi_l1:'Baru Mulai', lsi_l2:'Berkembang', lsi_l3:'Stabil', lsi_l4:'Sangat Stabil',
+    diary_name:'Buku Harian Cinta', diary_desc:'Garis waktu bersama, topik mingguan, album foto, tonggak hubungan.',
+    diary_link:'Bangun Bersama →', diary_days:'44 hari bersama', diary_themes:'Tema', diary_photos:'Foto', diary_tasks:'Tugas',
+    diary_warmth:'Kehangatan', diary_ev1:'Berhasil Dipasangkan', diary_ev2:'Pesan Pertama', diary_ev3:'Perjalanan Bersama 🏕️', diary_ev4:'Kenangan Foto',
+    report_name:'Laporan Bukti Imigrasi PDF', report_desc:'Buat laporan hubungan resmi dengan satu klik, sesuai USCIS.',
+    report_link:'Satu-satunya Alat →', report_gen:'Laporan Bukti Imigrasi PDF', report_ready:'Laporan Selesai · Sesuai USCIS',
+    report_includes:'Termasuk: Sampul · Garis waktu · T&J · Rekaman Foto',
+    rStep0:'Membaca catatan hubungan', rStep1:'Memverifikasi dokumen identitas', rStep2:'Mengintegrasikan acara garis waktu', rStep3:'Menghasilkan dokumen PDF',
+    who_label:'Untuk Siapa', who_title:'Orang Serius<br>Layak Mendapat Alat Serius',
+    who1_title:'Anda dengan status di AS atau AU', who1_desc:'Memiliki H1B, GC, atau kewarganegaraan, mencari pasangan jangka panjang yang kompatibel secara budaya.',
+    who2_title:'Anda yang serius merencanakan masa depan', who2_desc:'Di mana pun Anda berada, Anda mempertimbangkan kehidupan jangka panjang di luar negeri.',
+    tag_overseas:'Tionghoa Perantauan', tag_abroad:'Rencana Pindah',
+    test_label:'Apa Kata Pengguna', test_title:'Mereka Menemukannya di Sini',
+    test1_quote:'"Akhirnya ada tempat di mana saya tidak perlu menjelaskan apa itu H1B atau I-140."',
+    test1_info:'Insinyur Perangkat Lunak · Bay Area · H1B',
+    test2_quote:'"Buku Harian Cinta membuat catatan hubungan kami sangat lengkap."',
+    test2_info:'Manajer Produk · Seattle · GC',
+    test3_quote:'"Sulit menemukan orang berstatus AS dari Taiwan. Logika pencocokan di sini benar-benar berbeda."',
+    test3_info:'Desainer · Taipei · Berencana ke AS',
+    apply_badge:'53 Lamaran Diterima · 247 Tempat Tersisa',
+    filling_now:' orang sedang mengisi',
+    apply_title:'300 Orang Serius<br>Pertama',
+    apply_sub:'Akses awal hanya undangan. Isi informasi Anda dan kami akan mengirim kode undangan jika disetujui.',
+    form_name:'Nama Anda', form_email:'Email', form_visa:'Status Visa di Negara Tempat Tinggal', form_country:'Negara Saat Ini', form_city:'Kota Saat Ini',
+    form_visa_citizen:'Warga Negara', form_visa_longterm:'Visa Kerja Jangka Panjang', form_visa_shortterm:'Izin Kerja Jangka Pendek', form_visa_student:'Visa Pelajar/Kunjungan',
+    form_next:'Lanjutkan →', form_step2_hint:'Dua pertanyaan lagi untuk membantu kami mencocokkan Anda lebih baik.', form_disclaimer:'Kami akan memberi tahu melalui email setelah ditinjau. Tidak perlu pembayaran untuk mendaftar.', form_error:'Harap isi semua kolom yang diperlukan.',
+    form_intent:'Niat Imigrasi', form_yes:'Ya', form_no:'Tidak', form_submit:'Daftar sebagai Anggota Pendiri →',
+    form_success_title:'Pendaftaran Diterima', form_success_sub:'Kami akan menghubungi Anda melalui email setelah ditinjau.<br>Terima kasih telah menjadi salah satu yang pertama dan serius.',
+    form_intent_country:'Negara Tujuan',
+    form_country_us:'Amerika Serikat', form_country_au:'Australia', form_country_ca:'Kanada', form_country_uk:'Inggris',
+    form_other:'Lainnya', form_other2:'Lainnya', form_other3:'Lainnya',
+    footer_privacy:'Kebijakan Privasi', footer_terms:'Syarat Layanan',
+    sticky_spots:'Tempat Tersisa · Anggota Pendiri',
+    card_verified:'Terverifikasi', card_stability:'Sangat Stabil', card_developing:'Berkembang', card_stable:'Stabil', card_starting:'Baru Mulai',
+    card_tap:'Lihat profil lengkap', detail_close:'✕',
+    card_weekly:'Kemajuan Minggu Ini', card_week_theme:'Tema Minggu Ini',
+    sec_work:'Pekerjaan & Pendapatan', sec_immigration:'Informasi Imigrasi', sec_education:'Pendidikan',
+    detail_company:'Perusahaan', detail_title:'Jabatan', detail_income:'Pendapatan Tahunan',
+    detail_visa:'Status Visa', detail_progress:'Kemajuan',
+    detail_school:'Sekolah', detail_degree:'Gelar',
+    detail_goal:'Tujuan Hubungan', goal_marriage:'Pernikahan',
+    exclusive_badge:'Eksklusif', exclusive_note:'Anda telah memasuki hubungan eksklusif. Semua pasangan lain telah diarsipkan.', exclusive_lock:'🔓 Keduanya harus setuju untuk mengakhiri eksklusivitas',
+    excl_since:'Sejak', excl_together:'Bersama', excl_days:'hari',
+    excl_hint:'2 topik lagi untuk membuka lencana minggu ini',
+    excl_week_theme:'Jika bisa pergi ke mana saja bersama, ke mana Anda ingin pergi?',
+    excl_week_reply:'Makan shabu-shabu di penginapan Kyoto dikelilingi daun musim gugur. — Derek',
+    card_sub0:'Setiap orang adalah nyata.', card_sub1:'Kondisi transparan sejak hari pertama.', card_sub2:'Temukan seseorang yang jalannya sesuai.', card_sub3:'Hubungan yang dibangun bersama.', card_sub4:'Hubungan Anda menjadi bukti masa depan.',
+    match_success:'Cocok', match_lsi_match:'Kompatibilitas LSI', match_city:'Kota Sama', match_visa:'Status Visa',
+    derek_city:'CA · Davis', derek_job:'Software Engineer', derek_progress:'I-485 Diajukan',
+    mia_city:'CA · San Jose',
+    rpt_ev2:'Panggilan video pertama', rpt_ev3:'Pertemuan pertama', rpt_ev4:'Tonggak 30 hari',
+  },
+  'es': {
+    apply_btn:'Aplicar', nav_features:'Funciones', nav_who:'Para quién', nav_apply:'Aplicar', nav_testimonials:'Reseñas', nav_language:'Idioma',
+    hero_badge:'Acceso temprano · Primeros 300 miembros',
+    pivot_sub:'para quienes planifican su futuro en serio',
+    hero_sub:'No creemos que el estatus defina el valor de una persona.<br>Pero creemos que antes de comprometerse, dos personas deben ser honestas sobre su futuro.<br>PR APP usa datos realmente verificados — desde el primer encuentro hasta el matrimonio y la migración.<br>Cada paso, estamos contigo.',
+    hero_cta:'Aplicar como miembro fundador →', hero_learn:'Saber más',
+    stat_spots:'Asientos fundadores', stat_cities:'Ciudades en lanzamiento', stat_verified:'Verificación real',
+    feat_label:'Tres funciones que ningún competidor tiene', feat_title:'No somos solo una app de citas',
+    feat_sub:'Cada función está diseñada para hacer las relaciones internacionales más reales y seguras.',
+    lsi_name:'Índice de Estabilidad de Vida LSI', lsi_desc:'Cuantifica el estado de visa, ingresos, educación y verificación en una puntuación transparente.',
+    lsi_link:'Algoritmo exclusivo →', lsi_level:'NIVEL LSI', lsi_start:'Recién empezando',
+    lsi_l1:'Recién empezando', lsi_l2:'En desarrollo', lsi_l3:'Estable', lsi_l4:'Muy estable',
+    diary_name:'Diario de amor', diary_desc:'Línea de tiempo compartida, temas semanales, álbumes de fotos, hitos de la relación.',
+    diary_link:'Construir una relación →', diary_days:'44 días juntos', diary_themes:'Temas', diary_photos:'Fotos', diary_tasks:'Tareas',
+    diary_warmth:'Calidez', diary_ev1:'Emparejados', diary_ev2:'Primer mensaje', diary_ev3:'Viaje juntos 🏕️', diary_ev4:'Recuerdo fotográfico',
+    report_name:'Informe de evidencia de inmigración PDF', report_desc:'Genera un informe oficial de relación con un clic, compatible con USCIS.',
+    report_link:'La única herramienta →', report_gen:'Informe de evidencia de inmigración PDF', report_ready:'Informe completo · Compatible con USCIS',
+    report_includes:'Incluye: Portada · Línea de tiempo · Q&A · Registros fotográficos',
+    rStep0:'Leyendo registros de relación', rStep1:'Verificando documentos de identidad', rStep2:'Integrando eventos de línea de tiempo', rStep3:'Generando documento PDF',
+    who_label:'Para quién es esto', who_title:'Las personas serias<br>merecen herramientas serias',
+    who1_title:'Tú, con estatus en EE.UU. o AU', who1_desc:'Con H1B, GC o ciudadanía, buscando una pareja a largo plazo culturalmente compatible.',
+    who2_title:'Tú, planeando seriamente tu futuro', who2_desc:'Donde sea que estés, estás considerando una vida a largo plazo en el extranjero.',
+    tag_overseas:'Chinos en el extranjero', tag_abroad:'Planificando mudarse',
+    test_label:'Lo que dicen los usuarios', test_title:'Lo encontraron aquí',
+    test1_quote:'"Por fin un lugar donde no tengo que explicar qué es H1B o I-140."',
+    test1_info:'Ingeniero de software · Bay Area · H1B',
+    test2_quote:'"El Diario de amor hizo que nuestros registros de relación fueran increíblemente completos."',
+    test2_info:'Gerente de producto · Seattle · GC',
+    test3_quote:'"Difícil encontrar personas con estatus en EE.UU. desde Taiwán. La lógica de emparejamiento aquí es completamente diferente."',
+    test3_info:'Diseñadora · Taipei · Planificando ir a EE.UU.',
+    apply_badge:'53 solicitudes recibidas · 247 lugares restantes',
+    filling_now:' personas completando ahora',
+    apply_title:'Las primeras 300<br>personas serias',
+    apply_sub:'Acceso anticipado solo por invitación. Completa tu información y te enviaremos un código de invitación si eres aprobado.',
+    form_name:'Tu nombre', form_email:'Correo electrónico', form_visa:'Estado de visa en tu país de residencia', form_country:'País actual', form_city:'Ciudad actual',
+    form_visa_citizen:'Ciudadano', form_visa_longterm:'Visa de trabajo a largo plazo', form_visa_shortterm:'Autorización de trabajo a corto plazo', form_visa_student:'Visa de estudiante/corta estancia',
+    form_next:'Continuar →', form_step2_hint:'Dos preguntas más para ayudarnos a encontrarte mejor pareja.', form_disclaimer:'Te notificaremos por email tras la revisión. No se requiere pago para aplicar.', form_error:'Por favor completa todos los campos requeridos.',
+    form_intent:'Intención de inmigración', form_yes:'Sí', form_no:'No', form_submit:'Aplicar como miembro fundador →',
+    form_success_title:'Solicitud recibida', form_success_sub:'Te notificaremos por email una vez revisada.<br>Gracias por ser uno de los primeros en tomar esto en serio.',
+    form_intent_country:'País destino',
+    form_country_us:'Estados Unidos', form_country_au:'Australia', form_country_ca:'Canadá', form_country_uk:'Reino Unido',
+    form_other:'Otro', form_other2:'Otro', form_other3:'Otro',
+    footer_privacy:'Política de privacidad', footer_terms:'Términos de servicio',
+    sticky_spots:'lugares restantes · Miembros fundadores',
+    card_verified:'Verificado', card_stability:'Muy estable', card_developing:'En desarrollo', card_stable:'Estable', card_starting:'Recién empezando',
+    card_tap:'Ver perfil completo', detail_close:'✕',
+    card_weekly:'Progreso semanal', card_week_theme:'Tema de esta semana',
+    sec_work:'Trabajo e Ingresos', sec_immigration:'Inmigración', sec_education:'Educación',
+    detail_company:'Empresa', detail_title:'Cargo', detail_income:'Ingreso anual',
+    detail_visa:'Estado de visa', detail_progress:'Progreso',
+    detail_school:'Universidad', detail_degree:'Título',
+    detail_goal:'Objetivo de relación', goal_marriage:'Matrimonio',
+    exclusive_badge:'Exclusivo', exclusive_note:'Has entrado en una relación exclusiva. Todas las otras coincidencias han sido archivadas.', exclusive_lock:'🔓 Ambos deben estar de acuerdo para terminar la exclusividad',
+    excl_since:'Desde', excl_together:'Juntos', excl_days:'días',
+    excl_hint:'2 temas más para desbloquear la insignia de esta semana',
+    excl_week_theme:'Si pudieras ir a cualquier lugar juntos, ¿adónde irías?',
+    excl_week_reply:'Comer fondue en un ryokan de Kioto rodeado de hojas de otoño. — Derek',
+    card_sub0:'Cada persona es real.', card_sub1:'Las condiciones son transparentes desde el primer día.', card_sub2:'Encuentra a alguien cuyo camino se alinee.', card_sub3:'Una relación construida juntos.', card_sub4:'Tu relación se convierte en prueba de tu futuro.',
+    match_success:'¡Coincidencia!', match_lsi_match:'Compatibilidad LSI', match_city:'Misma Ciudad', match_visa:'Estado de Visa',
+    derek_city:'CA · Davis', derek_job:'Ingeniero de Software', derek_progress:'I-485 Presentado',
+    mia_city:'CA · San Jose',
+    rpt_ev2:'Primera videollamada', rpt_ev3:'Primer encuentro', rpt_ev4:'Hito de 30 días',
+  },
+  'fr': {
+    apply_btn:'Postuler', nav_features:'Fonctionnalités', nav_who:'Pour qui', nav_apply:'Postuler', nav_testimonials:'Avis', nav_language:'Langue',
+    hero_badge:'Accès anticipé · 300 premiers membres',
+    pivot_sub:'pour ceux qui planifient sérieusement leur avenir',
+    hero_sub:'Nous ne croyons pas que le statut définit la valeur d\'une personne.<br>Mais nous croyons qu\'avant de s\'engager, deux personnes doivent être honnêtes sur leur avenir.<br>PR APP utilise des données réellement vérifiées — de la première rencontre au mariage et à l\'immigration.<br>Chaque étape, nous sommes avec vous.',
+    hero_cta:'Postuler comme membre fondateur →', hero_learn:'En savoir plus',
+    stat_spots:'Sièges membres fondateurs', stat_cities:'Villes au lancement', stat_verified:'Vérification réelle',
+    feat_label:'Trois fonctionnalités qu\'aucun concurrent n\'a', feat_title:'Nous ne sommes pas juste une appli de rencontres',
+    feat_sub:'Chaque fonctionnalité est conçue pour rendre les relations internationales plus réelles et sécurisées.',
+    lsi_name:'Indice de Stabilité de Vie LSI', lsi_desc:'Quantifie le statut de visa, revenus, études et vérification en un score transparent.',
+    lsi_link:'Algorithme propriétaire →', lsi_level:'NIVEAU LSI', lsi_start:'Tout juste commencé',
+    lsi_l1:'Tout juste commencé', lsi_l2:'En développement', lsi_l3:'Stable', lsi_l4:'Très stable',
+    diary_name:'Journal d\'amour', diary_desc:'Chronologie partagée, sujets hebdomadaires, albums photos, jalons de la relation.',
+    diary_link:'Construire une relation →', diary_days:'44 jours ensemble', diary_themes:'Thèmes', diary_photos:'Photos', diary_tasks:'Tâches',
+    diary_warmth:'Chaleur', diary_ev1:'Jumelés', diary_ev2:'Premier message', diary_ev3:'Voyage ensemble 🏕️', diary_ev4:'Souvenir photo',
+    report_name:'Rapport de preuve d\'immigration PDF', report_desc:'Générez un rapport officiel de relation en un clic, conforme USCIS.',
+    report_link:'Le seul outil →', report_gen:'Rapport de preuve d\'immigration PDF', report_ready:'Rapport complet · Conforme USCIS',
+    report_includes:'Inclut : Couverture · Chronologie · Q&R · Dossier photo',
+    rStep0:'Lecture des dossiers de relation', rStep1:'Vérification des documents d\'identité', rStep2:'Intégration des événements de chronologie', rStep3:'Génération du document PDF',
+    who_label:'Pour qui', who_title:'Les gens sérieux<br>méritent des outils sérieux',
+    who1_title:'Vous, avec un statut aux États-Unis ou en AU', who1_desc:'Titulaire d\'un H1B, GC ou citoyenneté, cherchant un partenaire à long terme culturellement compatible.',
+    who2_title:'Vous, planifiant sérieusement votre avenir', who2_desc:'Où que vous soyez, vous envisagez une vie à long terme à l\'étranger.',
+    tag_overseas:'Chinois d\'outre-mer', tag_abroad:'Planifiant de s\'installer',
+    test_label:'Ce que disent les utilisateurs', test_title:'Ils l\'ont trouvé ici',
+    test1_quote:'"Enfin un endroit où je n\'ai pas à expliquer ce qu\'est le H1B ou l\'I-140."',
+    test1_info:'Ingénieur logiciel · Bay Area · H1B',
+    test2_quote:'"Le Journal d\'amour a rendu nos dossiers de relation incroyablement complets."',
+    test2_info:'Chef de produit · Seattle · GC',
+    test3_quote:'"Difficile de trouver des personnes avec statut américain depuis Taïwan. La logique de jumelage ici est complètement différente."',
+    test3_info:'Designer · Taipei · Prévoit d\'aller aux États-Unis',
+    apply_badge:'53 candidatures reçues · 247 places restantes',
+    filling_now:' personnes en train de remplir',
+    apply_title:'Les 300 premières<br>personnes sérieuses',
+    apply_sub:'Accès anticipé sur invitation uniquement. Remplissez vos informations et nous enverrons un code d\'invitation si approuvé.',
+    form_name:'Votre nom', form_email:'Email', form_visa:'Statut de visa dans votre pays de résidence', form_country:'Pays actuel', form_city:'Ville actuelle',
+    form_visa_citizen:'Citoyen', form_visa_longterm:'Visa de travail longue durée', form_visa_shortterm:'Autorisation de travail courte durée', form_visa_student:'Visa étudiant/court séjour',
+    form_next:'Continuer →', form_step2_hint:'Deux dernières questions pour mieux vous matcher.', form_disclaimer:'Vous serez notifié par email après examen. Aucun paiement requis pour postuler.', form_error:'Veuillez remplir tous les champs obligatoires.',
+    form_intent:'Intention d\'immigration', form_yes:'Oui', form_no:'Non', form_submit:'Postuler comme membre fondateur →',
+    form_success_title:'Candidature reçue', form_success_sub:'Nous vous notifierons par email après examen.<br>Merci d\'être l\'une des premières personnes sérieuses.',
+    form_intent_country:'Pays cible',
+    form_country_us:'États-Unis', form_country_au:'Australie', form_country_ca:'Canada', form_country_uk:'Royaume-Uni',
+    form_other:'Autre', form_other2:'Autre', form_other3:'Autre',
+    footer_privacy:'Politique de confidentialité', footer_terms:'Conditions d\'utilisation',
+    sticky_spots:'places restantes · Membres fondateurs',
+    card_verified:'Vérifié', card_stability:'Très stable', card_developing:'En développement', card_stable:'Stable', card_starting:'Tout juste commencé',
+    card_tap:'Voir le profil complet', detail_close:'✕',
+    card_weekly:'Progrès de la semaine', card_week_theme:'Thème de la semaine',
+    sec_work:'Travail et revenus', sec_immigration:'Immigration', sec_education:'Éducation',
+    detail_company:'Entreprise', detail_title:'Titre du poste', detail_income:'Revenu annuel',
+    detail_visa:'Statut de visa', detail_progress:'Progrès',
+    detail_school:'École', detail_degree:'Diplôme',
+    detail_goal:'Objectif de relation', goal_marriage:'Mariage',
+    exclusive_badge:'Exclusif', exclusive_note:'Vous êtes entré dans une relation exclusive. Tous les autres matchs ont été archivés.', exclusive_lock:'🔓 Les deux doivent accepter pour mettre fin à l\'exclusivité',
+    excl_since:'Depuis', excl_together:'Ensemble', excl_days:'jours',
+    excl_hint:'2 sujets de plus pour débloquer le badge de cette semaine',
+    excl_week_theme:'Si vous pouviez aller n\'importe où ensemble, où iriez-vous?',
+    excl_week_reply:'Dîner fondue dans un ryokan de Kyoto entouré de feuilles d\'automne. — Derek',
+    card_sub0:'Chaque personne est réelle.', card_sub1:'Les conditions sont transparentes dès le premier jour.', card_sub2:'Trouvez quelqu\'un dont le chemin s\'aligne.', card_sub3:'Une relation construite ensemble.', card_sub4:'Votre relation devient la preuve de votre avenir.',
+    match_success:'Match!', match_lsi_match:'Compatibilité LSI', match_city:'Même ville', match_visa:'Statut de visa',
+    derek_city:'CA · Davis', derek_job:'Ingénieur logiciel', derek_progress:'I-485 Déposé',
+    mia_city:'CA · San Jose',
+    rpt_ev2:'Premier appel vidéo', rpt_ev3:'Première rencontre', rpt_ev4:'Étape des 30 jours',
+  },
+};
+
+let currentLang = 'en';
+
+function t(key) {
+  return (translations[currentLang] && translations[currentLang][key]) ||
+         (translations['en'] && translations['en'][key]) || key;
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val.includes('<')) el.innerHTML = val; else el.textContent = val;
+  });
+  document.querySelectorAll('[data-placeholder]').forEach(el => {
+    el.setAttribute('placeholder', t(el.getAttribute('data-placeholder')));
+  });
+  document.documentElement.lang = currentLang;
+  renderHeroCards();
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === {
+      'zh-TW':'繁體中文','zh-CN':'简体中文','en':'English','ja':'日本語','ko':'한국어',
+      'vi':'Tiếng Việt','th':'ภาษาไทย','id':'Bahasa','es':'Español','fr':'Français'
+    }[lang]);
+  });
+  applyTranslations();
+}
+
+// ── NAV ──────────────────────────────────────
+function openNav() { document.getElementById('navDrawer').classList.add('open'); document.getElementById('navOverlay').classList.add('open'); }
+function closeNav() { document.getElementById('navDrawer').classList.remove('open'); document.getElementById('navOverlay').classList.remove('open'); }
+
+// ── HERO CAROUSEL ──────────────────────────────────────
+const heroProfiles = [
+  { type:'profile',   sub_key:'card_sub0', name:'Derek', age:32, city_key:'derek_city', job_key:'derek_job', school:'UC Davis', degree:'PhD in Computer Science', visa:'H1B', progress_key:'derek_progress', stability:'high', verified:true, company:'AMD', income:'$180K – $220K', goal:'marriage' },
+  { type:'match',     sub_key:'card_sub2', nameA:'Derek', ageA:32, cityA_key:'derek_city', visaA:'H1B', stabilityA:'high', nameB:'Mia', ageB:28, cityB_key:'mia_city', visaB:'H1B', stabilityB:'high', match_pct:94 },
+  { type:'exclusive', sub_key:'card_sub3', nameA:'Derek', nameB:'Mia', since:'2026/3/1', days:44, themes:7, photos:19, tasks:4, weekDone:5, weekTotal:7, weekTheme_key:'excl_week_theme', weekReply_key:'excl_week_reply' },
+  { type:'report',    sub_key:'card_sub4', nameA:'Derek', nameB:'Mia', days:44 },
+];
+
+let heroIdx = 0;
+let heroAuto;
+let detailShown = false;
+let heroSlideDir = 1;
+let heroGen = 0; // increments on every navigation; stale callbacks check against it
+
+function stabilityLabel(s) {
+  const map = { high:'card_stability', developing:'card_developing', stable:'card_stable', starting:'card_starting' };
+  return t(map[s] || 'card_starting');
+}
+function stabilityColor(s) {
+  return { high:'#c9a84c', developing:'#4a90d9', stable:'#2d9e6b', starting:'#aaa' }[s] || '#aaa';
+}
+
+function applySlideAnim(container) {
+  const cls = heroSlideDir >= 0 ? 'slide-in-right' : 'slide-in-left';
+  const el = container.firstElementChild;
+  if (!el) return;
+  el.classList.remove('slide-in-right', 'slide-in-left');
+  void el.offsetWidth; // reflow to restart animation
+  el.classList.add(cls);
+}
+
+function renderHeroCard(idx) {
+  const p = heroProfiles[idx];
+  const container = document.getElementById('heroCardContainer');
+
+  if (p.type === 'profile') {
+    const city = t(p.city_key) || p.city_key;
+    const job = t(p.job_key) || p.job_key;
+    container.innerHTML = `
+      <div style="width:100%;position:relative;aspect-ratio:3/4;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;" onclick="showDetail(${idx}, true)">
+        <img src="preview.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(160deg,#f5e8eb 0%,#d4a0ab 100%)'">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,transparent 55%);"></div>
+        <div style="position:absolute;top:14px;right:14px;font-size:10px;color:rgba(255,255,255,0.75);background:rgba(0,0,0,0.25);padding:3px 9px;border-radius:100px;">${t('card_tap')}</div>
+        <div style="position:relative;padding:26px 20px 18px;color:#fff;">
+          <div style="font-size:1.3rem;font-weight:300;margin-bottom:7px;">${p.name}, ${p.age}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+            ${p.verified ? `<span style="background:#2d9e6b;color:#fff;font-size:10px;padding:3px 9px;border-radius:100px;">✓ ${t('card_verified')}</span>` : ''}
+            <span style="background:${stabilityColor(p.stability)};color:#fff;font-size:10px;padding:3px 9px;border-radius:100px;">${stabilityLabel(p.stability)}</span>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.78);display:flex;gap:10px;flex-wrap:wrap;">
+            <span>📍 ${city}</span>
+            <span>💼 ${job}</span>
+            <span>🎓 ${p.school}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    applySlideAnim(container);
+
+  } else if (p.type === 'match') {
+    const cityA = t(p.cityA_key) || p.cityA_key;
+    const cityB = t(p.cityB_key) || p.cityB_key;
+    container.innerHTML = `
+      <div style="width:100%;aspect-ratio:3/4;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;">
+        <div style="background:var(--bg);border-bottom:1px solid rgba(200,16,46,0.10);padding:12px 18px 10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+          <span style="font-family:var(--font-display);font-size:0.9rem;letter-spacing:0.01em;color:var(--dark);"><span style="color:var(--red)">P</span>ermanent <span style="color:var(--red)">R</span>elationship</span>
+        </div>
+        <div style="background:linear-gradient(135deg,var(--red-light) 0%,#f5dde2 100%);padding:16px 20px 14px;text-align:center;flex-shrink:0;border-bottom:1px solid var(--red-mid);">
+          <div id="matchHeart" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:var(--red);box-shadow:0 4px 14px rgba(200,16,46,0.28);margin-bottom:8px;transform:scale(0);transition:transform 0.5s cubic-bezier(.34,1.56,.64,1);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </div>
+          <div id="matchTitle" style="font-size:1rem;font-weight:300;color:var(--red);letter-spacing:0.04em;opacity:0;transition:opacity 0.4s;">${t('match_success')}</div>
+        </div>
+        <div id="matchProfiles" style="padding:14px 16px 10px;display:flex;align-items:center;gap:10px;flex-shrink:0;opacity:0;transform:translateY(10px);transition:opacity 0.5s,transform 0.5s;">
+          <div style="flex:1;background:var(--white);border:1px solid var(--red-mid);border-radius:14px;padding:12px 10px;text-align:center;">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#f0d8dc,#e0b0ba);display:flex;align-items:center;justify-content:center;font-size:1rem;color:#8a4a55;margin:0 auto 8px;font-weight:300;">${p.nameA[0]}</div>
+            <div style="font-size:12px;font-weight:300;margin-bottom:4px;">${p.nameA}, ${p.ageA}</div>
+            <div style="font-size:9px;color:var(--gray);margin-bottom:7px;">📍 ${cityA}</div>
+            <span style="background:${stabilityColor('high')};color:#fff;font-size:9px;padding:2px 8px;border-radius:100px;display:block;margin-bottom:4px;">${stabilityLabel('high')}</span>
+            <span style="background:var(--light-gray);color:var(--gray);font-size:9px;padding:2px 8px;border-radius:100px;">${p.visaA}</span>
+          </div>
+          <div style="font-size:1rem;color:var(--red);flex-shrink:0;">♥</div>
+          <div style="flex:1;background:var(--white);border:1px solid var(--red-mid);border-radius:14px;padding:12px 10px;text-align:center;">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#d4e6f8,#9ec5e8);display:flex;align-items:center;justify-content:center;font-size:1rem;color:#3a6a8a;margin:0 auto 8px;font-weight:300;">${p.nameB[0]}</div>
+            <div style="font-size:12px;font-weight:300;margin-bottom:4px;">${p.nameB}, ${p.ageB}</div>
+            <div style="font-size:9px;color:var(--gray);margin-bottom:7px;">📍 ${cityB}</div>
+            <span style="background:${stabilityColor('high')};color:#fff;font-size:9px;padding:2px 8px;border-radius:100px;display:block;margin-bottom:4px;">${stabilityLabel('high')}</span>
+            <span style="background:var(--light-gray);color:var(--gray);font-size:9px;padding:2px 8px;border-radius:100px;">${p.visaB}</span>
+          </div>
+        </div>
+        <div id="matchLsiWrap" style="margin:0 16px;background:var(--white);border:1px solid var(--light-gray);border-radius:12px;padding:12px 14px;opacity:0;transform:translateY(8px);transition:opacity 0.5s,transform 0.5s;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+            <span style="font-size:10px;color:var(--gray);letter-spacing:0.03em;">${t('match_lsi_match')}</span>
+            <span id="matchLsiPct" style="font-size:12px;font-weight:300;color:var(--gold);">0%</span>
+          </div>
+          <div style="background:var(--light-gray);border-radius:100px;height:4px;overflow:hidden;margin-bottom:9px;">
+            <div id="matchLsiBar" style="width:0%;height:100%;background:linear-gradient(90deg,#c9a84c,#e0c06a);border-radius:100px;transition:width 1.4s cubic-bezier(.4,0,.2,1);"></div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span id="matchTag0" style="background:#e8f4ee;color:#2d9e6b;font-size:9px;padding:2px 9px;border-radius:100px;opacity:0;transition:opacity 0.4s;">✓ ${t('match_city')}</span>
+            <span id="matchTag1" style="background:#e8f4ee;color:#2d9e6b;font-size:9px;padding:2px 9px;border-radius:100px;opacity:0;transition:opacity 0.4s;">✓ ${t('match_visa')}</span>
+            <span id="matchTag2" style="background:var(--gold-light);color:#8a6020;font-size:9px;padding:2px 9px;border-radius:100px;opacity:0;transition:opacity 0.4s;">⚖️ LSI</span>
+          </div>
+        </div>
+      </div>
+    `;
+    applySlideAnim(container);
+    animateMatchCard(heroGen, p.match_pct);
+
+  } else if (p.type === 'exclusive') {
+    const weekProgress = p.weekDone / p.weekTotal * 100;
+    container.innerHTML = `
+      <div class="excl-card">
+        <div class="excl-topbar">
+          <div class="excl-topbar-logo"><span class="pr">P</span>ermanent <span class="pr">R</span>elationship</div>
+          <div style="font-size:10px;color:var(--gold);font-weight:300;">${t('exclusive_badge')}</div>
+        </div>
+        <div class="excl-header">
+          <div style="display:flex;gap:-4px;">
+            <div class="excl-avatar" style="background:#e8c5cc;">D</div>
+            <div class="excl-avatar" style="background:#4a90d9;margin-left:-8px;">M</div>
+          </div>
+          <div>
+            <div class="excl-name">${p.nameA} &amp; ${p.nameB}</div>
+            <div class="excl-since">${t('excl_since')} ${p.since} · ${t('excl_together')} ${p.days} ${t('excl_days')}</div>
+          </div>
+        </div>
+        <div class="excl-badge-row">
+          <div class="excl-badge">
+            <div class="excl-badge-icon">🔒</div>
+            <div>
+              <div class="excl-badge-text">${t('exclusive_note')}</div>
+              <div class="excl-badge-lock">${t('exclusive_lock')}</div>
+            </div>
+          </div>
+        </div>
+        <div class="excl-progress-section">
+          <div class="excl-progress-label">
+            <span>${t('card_weekly')}</span>
+            <span class="excl-progress-pct">${p.weekDone} / ${p.weekTotal} 🏅</span>
+          </div>
+          <div class="excl-progress-bar"><div id="exclProgressFill" class="excl-progress-fill" style="width:0%;transition:width 1.4s cubic-bezier(.4,0,.2,1);" data-target="${weekProgress}"></div></div>
+          <div class="excl-progress-hint">${t('excl_hint')}</div>
+        </div>
+        <div class="excl-stats">
+          <div class="excl-stat">
+            <div id="exclStatThemes" class="excl-stat-num excl-stat-red" data-target="${p.themes}">0</div>
+            <div class="excl-stat-label">${t('diary_themes')}</div>
+          </div>
+          <div class="excl-stat">
+            <div id="exclStatPhotos" class="excl-stat-num excl-stat-gold" data-target="${p.photos}">0</div>
+            <div class="excl-stat-label">${t('diary_photos')}</div>
+          </div>
+          <div class="excl-stat">
+            <div id="exclStatTasks" class="excl-stat-num excl-stat-green" data-target="${p.tasks}">0</div>
+            <div class="excl-stat-label">${t('diary_tasks')}</div>
+          </div>
+        </div>
+        <div class="excl-theme-section">
+          <div class="excl-theme-label">${t('card_week_theme')}</div>
+          <div class="excl-theme-q">${t('excl_week_theme')}</div>
+          <div id="exclThemeA" class="excl-theme-a" style="opacity:0;transform:translateY(6px);transition:opacity 0.6s,transform 0.6s;">${t('excl_week_reply')}</div>
+        </div>
+      </div>
+    `;
+    applySlideAnim(container);
+    animateExclCard(heroGen);
+
+  } else if (p.type === 'report') {
+    const evs = [
+      { dot:'#2d9e6b', date:'2026-03-01', key:'diary_ev1' },
+      { dot:'#4a90d9', date:'2026-03-08', key:'rpt_ev2' },
+      { dot:'#c9a84c', date:'2026-03-22', key:'rpt_ev3' },
+      { dot:'#C8102E', date:'2026-04-14', key:'rpt_ev4' },
+    ];
+    const steps = ['rStep0','rStep1','rStep2','rStep3'];
+    container.innerHTML = `
+      <div style="width:100%;aspect-ratio:3/4;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;">
+        <div style="background:var(--bg);border-bottom:1px solid rgba(200,16,46,0.10);padding:12px 18px 10px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-family:var(--font-display);font-size:0.9rem;letter-spacing:0.01em;color:var(--dark);"><span style="color:var(--red)">P</span>ermanent <span style="color:var(--red)">R</span>elationship</span>
+          <span style="font-size:9px;color:var(--gold);letter-spacing:0.06em;text-transform:uppercase;font-weight:300;">${t('report_name') || 'PDF'}</span>
+        </div>
+        <div style="padding:14px 18px 10px;flex-shrink:0;">
+          <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);margin-bottom:10px;font-weight:400;">${p.nameA} &amp; ${p.nameB} · ${p.days} ${t('excl_days')}</div>
+          <div style="display:flex;flex-direction:column;gap:0;">
+            ${evs.map((ev,i,arr) => `
+              <div id="rptEv${i}" style="display:flex;align-items:flex-start;gap:10px;opacity:0;transform:translateX(-10px);transition:opacity 0.4s,transform 0.4s;">
+                <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+                  <div style="width:9px;height:9px;border-radius:50%;background:${ev.dot};margin-top:3px;"></div>
+                  ${i < arr.length-1 ? `<div style="width:1px;height:18px;background:var(--red-mid);margin:2px 0;"></div>` : ''}
+                </div>
+                <div style="margin-bottom:${i < arr.length-1 ? '0' : '0'};">
+                  <div style="font-size:10px;font-weight:300;color:var(--dark);">${t(ev.key) || ev.key}</div>
+                  <div style="font-size:9px;color:var(--gray);margin-top:1px;">${ev.date}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div style="height:1px;background:var(--light-gray);margin:0 18px;flex-shrink:0;"></div>
+        <div style="padding:12px 18px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);margin-bottom:9px;font-weight:400;">${t('report_gen') || 'PDF Report'}</div>
+          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px;">
+            ${steps.map((k,i) => `
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div id="rptStep${i}" style="width:16px;height:16px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;background:var(--light-gray);color:var(--gray);border:1px solid #ddd;transition:background 0.3s,color 0.3s;">○</div>
+                <span id="rptStepLabel${i}" style="font-size:11px;font-weight:300;color:var(--gray);transition:color 0.3s;">${t(k) || k}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div style="background:var(--light-gray);border-radius:100px;height:4px;overflow:hidden;margin-bottom:7px;">
+            <div id="rptProgressBar" style="width:0%;height:100%;background:linear-gradient(90deg,var(--red),#e84060);border-radius:100px;transition:width 1.2s cubic-bezier(.4,0,.2,1);"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:9px;color:var(--gray);">USCIS · I-130 · Partner Visa</span>
+            <span id="rptPct" style="font-size:10px;color:var(--red);font-weight:300;">0%</span>
+          </div>
+        </div>
+      </div>
+    `;
+    applySlideAnim(container);
+    animateReportCard(heroGen);
+  }
+}
+
+// ── CARD ANIMATIONS ────────────────────────────────────
+
+function animateMatchCard(gen, pct) {
+  // Heart pops in
+  setTimeout(() => {
+    if (heroGen !== gen) return;
+    const h = document.getElementById('matchHeart');
+    if (h) h.style.transform = 'scale(1)';
+    const t2 = document.getElementById('matchTitle');
+    if (t2) t2.style.opacity = '1';
+  }, 500);
+  // Profiles slide up
+  setTimeout(() => {
+    if (heroGen !== gen) return;
+    const pr = document.getElementById('matchProfiles');
+    if (pr) { pr.style.opacity = '1'; pr.style.transform = 'translateY(0)'; }
+  }, 900);
+  // LSI section fades in
+  setTimeout(() => {
+    if (heroGen !== gen) return;
+    const w = document.getElementById('matchLsiWrap');
+    if (w) { w.style.opacity = '1'; w.style.transform = 'translateY(0)'; }
+  }, 1300);
+  // Bar fills + counter
+  setTimeout(() => {
+    if (heroGen !== gen) return;
+    const bar = document.getElementById('matchLsiBar');
+    if (bar) bar.style.width = pct + '%';
+    countUpEl('matchLsiPct', 0, pct, 1400, gen, '%');
+  }, 1500);
+  // Tags appear
+  [0,1,2].forEach(i => setTimeout(() => {
+    if (heroGen !== gen) return;
+    const tag = document.getElementById('matchTag' + i);
+    if (tag) tag.style.opacity = '1';
+  }, 2100 + i * 200));
+}
+
+function animateExclCard(gen) {
+  // Progress bar fills
+  setTimeout(() => {
+    if (heroGen !== gen) return;
+    const fill = document.getElementById('exclProgressFill');
+    if (fill) fill.style.width = fill.dataset.target + '%';
+  }, 500);
+  // Stats count up
+  setTimeout(() => {
+    if (heroGen !== gen) return;
+    countUpEl('exclStatThemes', 0, +document.getElementById('exclStatThemes')?.dataset.target, 1200, gen);
+    countUpEl('exclStatPhotos', 0, +document.getElementById('exclStatPhotos')?.dataset.target, 1500, gen);
+    countUpEl('exclStatTasks',  0, +document.getElementById('exclStatTasks')?.dataset.target,  900,  gen);
+  }, 700);
+  // Theme reply fades in
+  setTimeout(() => {
+    if (heroGen !== gen) return;
+    const el = document.getElementById('exclThemeA');
+    if (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }
+  }, 2000);
+}
+
+function animateReportCard(gen) {
+  // Timeline events appear one by one
+  [0,1,2,3].forEach(i => setTimeout(() => {
+    if (heroGen !== gen) return;
+    const ev = document.getElementById('rptEv' + i);
+    if (ev) { ev.style.opacity = '1'; ev.style.transform = 'translateX(0)'; }
+  }, 400 + i * 450));
+  // Steps complete one by one
+  [0,1,2,3].forEach(i => setTimeout(() => {
+    if (heroGen !== gen) return;
+    const step = document.getElementById('rptStep' + i);
+    const label = document.getElementById('rptStepLabel' + i);
+    const isDone = i < 3;
+    if (step) {
+      step.style.background = isDone ? '#2d9e6b' : 'var(--gold-light)';
+      step.style.color = isDone ? '#fff' : '#8a6020';
+      step.style.borderColor = isDone ? '#2d9e6b' : 'var(--gold)';
+      step.textContent = isDone ? '✓' : '…';
+    }
+    if (label) label.style.color = 'var(--dark)';
+    // Update progress bar and pct
+    const pct = Math.round((i + 1) / 4 * 100);
+    const bar = document.getElementById('rptProgressBar');
+    const pctEl = document.getElementById('rptPct');
+    if (bar) bar.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = pct + '%';
+  }, 2200 + i * 600));
+}
+
+function countUpEl(id, from, to, duration, gen, suffix) {
+  if (!to) return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = performance.now();
+  suffix = suffix || '';
+  function step(now) {
+    if (heroGen !== gen) return;
+    const p = Math.min((now - start) / duration, 1);
+    const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+    el.textContent = Math.round(from + (to - from) * ease) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function renderDetailContent(idx) {
+  const p = heroProfiles[idx];
+  if (!p.name) return;
+  const city = t(p.city_key) || p.city_key;
+  const job = t(p.job_key) || p.job_key;
+  const progress = t(p.progress_key) || p.progress_key;
+
+  // Avatar initial
+  document.getElementById('detailAvatar').textContent = p.name[0];
+
+  // Name + age (no stability here — badges handle it)
+  document.getElementById('detailName').textContent = `${p.name}, ${p.age}`;
+
+  // Badges row
+  document.getElementById('detailBadges').innerHTML =
+    (p.verified ? `<span class="detail-badge-verified">✓ ${t('card_verified')}</span>` : '') +
+    `<span class="detail-badge-stability" style="background:${stabilityColor(p.stability)}">${stabilityLabel(p.stability)}</span>`;
+
+  // Location
+  document.getElementById('detailLocation').textContent = `📍 ${city}`;
+
+  // Body
+  const vBadge = `<span class="detail-verified">✓</span>`;
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-section-title">${t('sec_work')}</div>
+    <div class="detail-row">
+      <span class="detail-label">${t('detail_company')}</span>
+      <span class="detail-value">${vBadge}${p.company}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">${t('detail_title')}</span>
+      <span class="detail-value">${job}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">${t('detail_income')}</span>
+      <span class="detail-value">${p.income}</span>
+    </div>
+    <div class="detail-section-title">${t('sec_immigration')}</div>
+    <div class="detail-row">
+      <span class="detail-label">${t('detail_visa')}</span>
+      <span class="detail-value">${vBadge}${p.visa}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">${t('detail_progress')}</span>
+      <span class="detail-value">${progress}</span>
+    </div>
+    <div class="detail-section-title">${t('sec_education')}</div>
+    <div class="detail-row">
+      <span class="detail-label">${t('detail_school')}</span>
+      <span class="detail-value">${vBadge}${p.school}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">${t('detail_degree')}</span>
+      <span class="detail-value">${p.degree}</span>
+    </div>
+  `;
+}
+
+function showDetail(idx, isManual) {
+  renderDetailContent(idx);
+  const overlay = document.getElementById('detailOverlay');
+  overlay.classList.add('visible');
+  detailShown = true;
+  // Only scroll if user manually tapped (not auto-animation)
+  if (isManual) {
+    setTimeout(() => {
+      document.getElementById('heroCardWrap').scrollIntoView({ behavior:'smooth', block:'center' });
+    }, 100);
+  }
+}
+
+function hideDetail() {
+  document.getElementById('detailOverlay').classList.remove('visible');
+  detailShown = false;
+}
+
+function renderHeroDots() {
+  const dots = document.getElementById('heroDots');
+  dots.innerHTML = heroProfiles.map((_, i) =>
+    `<div class="c-dot${i === heroIdx ? ' active' : ''}" onclick="goHero(${i})"></div>`
+  ).join('');
+  const sub = document.getElementById('heroCardSub');
+  if (sub) {
+    const p = heroProfiles[heroIdx];
+    sub.textContent = p.sub_key ? (t(p.sub_key) || '') : '';
+  }
+}
+
+function renderHeroCards() {
+  renderHeroCard(heroIdx);
+  renderHeroDots();
+}
+
+function goHero(idx) {
+  heroSlideDir = idx >= heroIdx ? 1 : -1;
+  heroIdx = idx;
+  heroGen++;
+  hideDetail();
+  renderHeroCards();
+  startHeroAuto();
+}
+
+function heroNav(dir) {
+  heroSlideDir = dir;
+  heroIdx = (heroIdx + dir + heroProfiles.length) % heroProfiles.length;
+  heroGen++;
+  hideDetail();
+  renderHeroCards();
+  startHeroAuto();
+}
+
+function startHeroAuto() {
+  clearTimeout(heroAuto);
+  const gen = heroGen; // do NOT increment — animation fns already captured heroGen at render time
+  function runStep() {
+    if (heroGen !== gen) return;
+    const overlay = document.getElementById('detailOverlay');
+    if (overlay.classList.contains('visible')) return;
+    const p = heroProfiles[heroIdx];
+    if (p.type === 'profile') {
+      heroAuto = setTimeout(() => {
+        if (heroGen !== gen) return;
+        showDetail(heroIdx, false);
+        heroAuto = setTimeout(() => {
+          if (heroGen !== gen) return;
+          hideDetail();
+          heroAuto = setTimeout(() => {
+            if (heroGen !== gen) return;
+            heroSlideDir = 1;
+            heroIdx = (heroIdx + 1) % heroProfiles.length;
+            renderHeroCards();
+            heroAuto = setTimeout(runStep, 800);
+          }, 1200);
+        }, 1800);
+      }, 1000);
+    } else {
+      // match (card 1): 3.5s quick browse; exclusive (card 2): 7s; report (card 3): 9s
+      const dur = p.type === 'match' ? 3500 : p.type === 'exclusive' ? 7000 : 9000;
+      heroAuto = setTimeout(() => {
+        if (heroGen !== gen) return;
+        heroSlideDir = 1;
+        heroIdx = (heroIdx + 1) % heroProfiles.length;
+        renderHeroCards();
+        heroAuto = setTimeout(runStep, 800);
+      }, dur);
+    }
+  }
+  heroAuto = setTimeout(runStep, 1200);
+}
+
+// ── LSI DEMO ANIMATION ──────────────────────
+const lsiStages = [
+  { idx:0, label:'lsi_start', color:'gray-c', barWidths:[30,0,0,0], barColors:['#a0b8d8','#4a90d9','#2d9e6b','var(--gold)'], activeRow:'blue-active', goldFrame:false },
+  { idx:1, label:'lsi_l2', color:'blue', barWidths:[100,45,0,0], barColors:['#a0b8d8','#4a90d9','#2d9e6b','var(--gold)'], activeRow:'blue-active', goldFrame:false },
+  { idx:2, label:'lsi_l3', color:'green', barWidths:[100,100,60,0], barColors:['#a0b8d8','#4a90d9','#2d9e6b','var(--gold)'], activeRow:'green-active', goldFrame:false },
+  { idx:3, label:'lsi_l4', color:'gold', barWidths:[100,100,100,90], barColors:['#a0b8d8','#4a90d9','#2d9e6b','var(--gold)'], activeRow:'gold-active', goldFrame:true },
+];
+let lsiStageIdx = 0;
+
+function animateLSI() {
+  const stage = lsiStages[lsiStageIdx];
+  const cur = document.getElementById('lsiCurrent');
+  cur.className = `lsi-current ${stage.color}`;
+  cur.setAttribute('data-i18n', stage.label);
+  cur.textContent = t(stage.label);
+  // Rows
+  for (let i = 0; i < 4; i++) {
+    const row = document.getElementById(`lsiRow${i}`);
+    row.className = 'lsi-level-row' + (i === stage.idx ? ` active ${stage.activeRow}` : '');
+    const bar = row.querySelector('.lsi-bar-fill');
+    if (bar) {
+      bar.style.width = stage.barWidths[i] + '%';
+      bar.style.background = stage.barColors[i];
+    }
+  }
+  const goldFrame = document.getElementById('lsiGoldFrame');
+  goldFrame.classList.toggle('visible', stage.goldFrame);
+  lsiStageIdx = (lsiStageIdx + 1) % lsiStages.length;
+}
+setInterval(animateLSI, 2000);
+setTimeout(animateLSI, 200);
+
+// ── DIARY DEMO ANIMATION ──────────────────────
+const diaryStages = [
+  { days:1, themes:0, photos:0, tasks:0, warmth:5, events:['diary_ev1'] },
+  { days:10, themes:2, photos:4, tasks:1, warmth:22, events:['diary_ev1','diary_ev2'] },
+  { days:30, themes:6, photos:12, tasks:3, warmth:55, events:['diary_ev1','diary_ev2','diary_ev3'] },
+  { days:60, themes:14, photos:26, tasks:7, warmth:82, events:['diary_ev1','diary_ev2','diary_ev3','diary_ev4'] },
+];
+let diaryStageIdx = 0;
+const diaryDates = ['2026-03-01','2026-03-11','2026-03-31','2026-05-01'];
+
+function animateDiary() {
+  const s = diaryStages[diaryStageIdx];
+  const tEl = document.getElementById('diaryDays');
+  if (tEl) {
+    if (currentLang === 'en') tEl.textContent = `Together ${s.days} days`;
+    else if (currentLang === 'ja') tEl.textContent = `交際 ${s.days} 日`;
+    else if (currentLang === 'ko') tEl.textContent = `${s.days}일째`;
+    else tEl.textContent = `交往 ${s.days} 天`;
+  }
+  const th = document.getElementById('diaryThemes');
+  const ph = document.getElementById('diaryPhotos');
+  const ta = document.getElementById('diaryTasks');
+  const w = document.getElementById('diaryWarmth');
+  const wp = document.getElementById('diaryWarmthPct');
+  if (th) th.textContent = s.themes;
+  if (ph) ph.textContent = s.photos;
+  if (ta) ta.textContent = s.tasks;
+  if (w) w.style.width = s.warmth + '%';
+  if (wp) wp.textContent = s.warmth + '%';
+  const timeline = document.getElementById('diaryTimeline');
+  if (timeline) {
+    const eventKeys = ['diary_ev1','diary_ev2','diary_ev3','diary_ev4'];
+    const commentText = { diary_ev2:'💬 2 comments', diary_ev3:'💬 3 comments', diary_ev4:'💬 1 comment' };
+    timeline.innerHTML = s.events.map((ev, i) => `
+      <div class="diary-event">
+        <div class="diary-event-dot"></div>
+        <div class="diary-event-content">
+          <div class="diary-event-title">${t(ev)}</div>
+          <div class="diary-event-date">${diaryDates[i]}</div>
+          ${commentText[ev] ? `<div class="diary-comment">${commentText[ev]}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+  diaryStageIdx = (diaryStageIdx + 1) % diaryStages.length;
+}
+setInterval(animateDiary, 2200);
+setTimeout(animateDiary, 400);
+
+// ── REPORT DEMO ANIMATION ──────────────────────
+const reportStepKeys = ['rStep0','rStep1','rStep2','rStep3'];
+let reportPhase = 0;
+let reportTimer;
+
+function runReportAnimation() {
+  // Reset
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById(`rStep${i}`);
+    if (el) { el.className = 'step-icon step-pending'; el.textContent = '○'; }
+  }
+  const bar = document.getElementById('reportBar');
+  const pct = document.getElementById('reportPct');
+  const preview = document.getElementById('reportPreview');
+  if (bar) bar.style.width = '0%';
+  if (pct) pct.textContent = '0%';
+  if (preview) preview.classList.remove('visible');
+
+  let step = 0;
+  function nextStep() {
+    if (step < 4) {
+      // Mark step as loading
+      const el = document.getElementById(`rStep${step}`);
+      if (el) { el.className = 'step-icon step-loading'; el.innerHTML = '<div class="spinner"></div>'; }
+      setTimeout(() => {
+        if (el) { el.className = 'step-icon step-done'; el.textContent = '✓'; }
+        const p = Math.round(((step + 1) / 4) * 100);
+        if (bar) bar.style.width = p + '%';
+        if (pct) pct.textContent = p + '%';
+        step++;
+        if (step < 4) setTimeout(nextStep, 700);
+        else {
+          if (preview) preview.classList.add('visible');
+          setTimeout(runReportAnimation, 3000);
+        }
+      }, 700);
+    }
+  }
+  setTimeout(nextStep, 600);
+}
+setTimeout(runReportAnimation, 800);
+
+// ── SCROLL FADE IN ──────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ── STICKY BAR SCROLL ─────────────────────────
+const stickyBar = document.querySelector('.sticky-bar');
+function updateStickyBar() {
+  const heroH = document.getElementById('home').offsetHeight;
+  const applyRect = document.getElementById('apply').getBoundingClientRect();
+  const applyVisible = applyRect.top < window.innerHeight && applyRect.bottom > 0;
+  if (window.scrollY > heroH * 0.8 && !applyVisible) {
+    stickyBar.classList.add('visible');
+  } else {
+    stickyBar.classList.remove('visible');
+  }
+}
+window.addEventListener('scroll', updateStickyBar, { passive: true });
+
+// ── FLAME COUNTER ─────────────────────────────
+//function randFilling() { return Math.floor(Math.random() * (93 - 13 + 1)) + 13; }
+
+let _fillingBase = 47;
+function randFilling() {
+  const delta = Math.floor(Math.random() * 11) - 5; // ±5
+  _fillingBase = Math.min(Math.max(_fillingBase + delta, 38), 62);
+  return _fillingBase;
+}
+
+function refreshFilling() {
+  const n = randFilling();
+  ['fillingApply','fillingHero','fillingSticky'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = n;
+  });
+}
+refreshFilling();
+setInterval(refreshFilling, 8000);
+
+// ── APPLY BADGE COUNTER ───────────────────────
+let _applyCount = 53;
+function tickApplyCount() {
+  if (Math.random() < 0.4) {
+    _applyCount = Math.min(_applyCount + 1, 280);
+    const remaining = 300 - _applyCount;
+    document.querySelectorAll('[data-i18n="apply_badge"]').forEach(el => {
+      const lang = currentLang;
+      if (lang === 'en') el.textContent = `${_applyCount} Applications Received · ${remaining} Spots Remaining`;
+      else if (lang === 'zh-CN') el.textContent = `已收到 ${_applyCount} 份申请 · 剩余 ${remaining} 个名额`;
+      else el.textContent = `已收到 ${_applyCount} 份申請 · 剩餘 ${remaining} 個名額`;
+    });
+  }
+}
+setInterval(tickApplyCount, 30000);
+
+// ── FORM VALIDATION & STEP SWITCH ─────────────
+function markError(el, hasError) {
+  el.classList.toggle('error', hasError);
+}
+document.getElementById('btnStep1').addEventListener('click', function() {
+  const nameEl  = document.querySelector('#formStep1 input[type=text]');
+  const emailEl = document.querySelector('#formStep1 input[type=email]');
+  const cityEl  = document.querySelector('#formStep1 .form-select');
+  const errEl   = document.getElementById('step1Error');
+  const nameOk  = nameEl.value.trim() !== '';
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim());
+  const cityOk  = cityEl.value !== '';
+  markError(nameEl,  !nameOk);
+  markError(emailEl, !emailOk);
+  markError(cityEl,  !cityOk);
+  if (!nameOk || !emailOk || !cityOk) {
+    errEl.classList.add('visible');
+    return;
+  }
+  errEl.classList.remove('visible');
+  document.getElementById('formStep1').style.display = 'none';
+  document.getElementById('formStep2').style.display = 'block';
+  document.getElementById('formStep2').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+document.getElementById('btnStep2').addEventListener('click', function() {
+  const visaEl   = document.getElementById('visaSelect');
+  const intentEl = document.querySelector('input[name=intent]:checked');
+  const errEl    = document.getElementById('step2Error');
+  const visaOk   = visaEl.value !== '';
+  const intentOk = intentEl !== null;
+  markError(visaEl, !visaOk);
+  if (!visaOk || !intentOk) {
+    errEl.classList.add('visible');
+    return;
+  }
+  errEl.classList.remove('visible');
+  document.querySelector('.apply-form').innerHTML = `
+    <div style="text-align:center; padding: 32px 0;">
+      <div style="font-size: 2rem; margin-bottom: 16px;">🎉</div>
+      <div style="font-size: 1.1rem; font-weight: 400; color: var(--dark); margin-bottom: 8px;">${t('form_success_title')}</div>
+      <div style="font-size: 13px; color: var(--gray); font-weight: 300; line-height: 1.7;">${t('form_success_sub')}</div>
+    </div>
+  `;
+});
+
+// ── INTENT COUNTRY TOGGLE ─────────────────────
+function toggleIntentCountry(radio) {
+  const wrap = document.getElementById('intentCountryWrap');
+  if (radio.value === 'yes') {
+    wrap.classList.add('visible');
+  } else {
+    wrap.classList.remove('visible');
+  }
+}
+
+// ── INIT ──────────────────────────────────────
+applyTranslations();
+startHeroAuto();
+</script>
+</body>
+</html>
