@@ -227,12 +227,12 @@ body {
 .c-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red-mid); cursor: pointer; transition: background 0.2s; }
 .c-dot.active { background: var(--red); }
 .hero-pivot-full {
-  display: flex; align-items: center; gap: 20px;
+  display: flex; align-items: center; justify-content: center; gap: 20px;
   width: 100%; max-width: 860px; margin-top: 40px;
 }
-.pivot-line { flex: 1; height: 1px; background: rgba(200,16,46,0.2); }
-.pivot-text { font-size: 12px; font-weight: 300; color: var(--red); letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 90vw; }
-.pivot-sub { color: var(--red); }
+.pivot-line { flex: 1; height: 1px; background: rgba(200,16,46,0.2); flex-shrink: 0; min-width: 20px; }
+.pivot-text { font-size: 12px; font-weight: 300; color: var(--red); letter-spacing: 0.06em; text-align: center; line-height: 1.8; white-space: normal; }
+.pivot-sub { color: var(--red); display: block; }
 
 /* Slide transition */
 .hero-card-wrap { overflow: hidden; }
