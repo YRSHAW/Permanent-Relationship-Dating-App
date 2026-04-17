@@ -463,6 +463,10 @@ body {
 .who-card-desc { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 300; line-height: 1.8; margin-bottom: 16px; }
 .who-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .who-tag { border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.6); border-radius: 100px; padding: 4px 12px; font-size: 11px; font-weight: 300; }
+.who-tag.tag-red    { border-color: rgba(200,16,46,0.6);  color: #f08090; background: rgba(200,16,46,0.12); }
+.who-tag.tag-gold   { border-color: rgba(201,168,76,0.6); color: #e0c06a; background: rgba(201,168,76,0.12); }
+.who-tag.tag-green  { border-color: rgba(45,158,107,0.6); color: #5dd4a0; background: rgba(45,158,107,0.12); }
+.who-tag.tag-blue   { border-color: rgba(74,144,217,0.6); color: #80b8ee; background: rgba(74,144,217,0.12); }
 
 /* ── TESTIMONIALS ────────────────────────────── */
 .testimonials { padding: 100px 5%; background: var(--bg); }
@@ -557,6 +561,31 @@ footer a:hover { color: rgba(255,255,255,0.7); }
   .logo { font-size: 1.25rem; }
   .hero { padding: 80px 4% 50px; }
   .features, .who-section, .testimonials, .apply-section { padding: 70px 4%; }
+
+  /* ── Mobile font size corrections ── */
+  body { font-size: 16px; }
+  .hero-sub { font-size: 15px; line-height: 1.8; }
+  .hero-badge, .filling-pill, .filling-now-badge { font-size: 12px; }
+  .stat-num { font-size: 2rem; }
+  .stat-label { font-size: 12px; }
+  .section-label { font-size: 11px; }
+  .section-title { font-size: 1.8rem; }
+  .section-sub { font-size: 15px; }
+  .feature-name { font-size: 1.05rem; }
+  .feature-desc { font-size: 13px; }
+  .who-card-title { font-size: 15px; }
+  .who-card-desc { font-size: 14px; }
+  .who-tag { font-size: 12px; }
+  .test-quote { font-size: 14px; }
+  .test-name { font-size: 14px; }
+  .test-info { font-size: 12px; }
+  .apply-title { font-size: 1.9rem; }
+  .apply-sub { font-size: 14px; }
+  .form-disclaimer { font-size: 12px; }
+  .form-step2-hint { font-size: 13px; }
+  .form-error-msg { font-size: 12px; }
+  .sticky-bar { font-size: 13px; }
+  .pivot-text { font-size: 13px; }
   .hero-carousel { width: 300px; }
   .hero-card-wrap { width: 300px; overflow-y: visible; }
   .hero-card-area { max-width: 340px; }
@@ -833,20 +862,20 @@ footer a:hover { color: rgba(255,255,255,0.7); }
       <div class="who-card-title" data-i18n="who1_title">在美或澳有身份的你</div>
       <div class="who-card-desc" data-i18n="who1_desc">持有 H1B、綠卡或公民身份，正在尋找文化相容、未來規劃一致的長期伴侶。你的穩定性在其他軟體是隱形的──在這裡，它是你最大的優勢。</div>
       <div class="who-tags">
-        <span class="who-tag">H1B</span>
-        <span class="who-tag">GC</span>
-        <span class="who-tag">US Citizen</span>
-        <span class="who-tag">AU PR</span>
+        <span class="who-tag tag-red">H1B</span>
+        <span class="who-tag tag-gold">GC</span>
+        <span class="who-tag tag-green">US Citizen</span>
+        <span class="who-tag tag-blue">AU PR</span>
       </div>
     </div>
     <div class="who-card fade-in">
       <div class="who-card-title" data-i18n="who2_title">認真規劃未來的你</div>
       <div class="who-card-desc" data-i18n="who2_desc">無論身在何處，你正在考慮在海外建立長期的生活。你不是在找捷徑，你想要找到真正相容的人，一起走得長遠。</div>
       <div class="who-tags">
-        <span class="who-tag">F1 / OPT</span>
-        <span class="who-tag">US Worker</span>
-        <span class="who-tag" data-i18n="tag_overseas">海外華人</span>
-        <span class="who-tag" data-i18n="tag_abroad">計畫移居</span>
+        <span class="who-tag tag-blue">F1 / OPT</span>
+        <span class="who-tag tag-red">US Worker</span>
+        <span class="who-tag tag-gold" data-i18n="tag_overseas">海外華人</span>
+        <span class="who-tag tag-green" data-i18n="tag_abroad">計畫移居</span>
       </div>
     </div>
   </div>
@@ -1635,6 +1664,7 @@ function applyTranslations() {
   });
   document.documentElement.lang = currentLang;
   renderHeroCards();
+  if (typeof updateApplyBadge === 'function') updateApplyBadge();
 }
 
 function setLang(lang) {
@@ -2297,17 +2327,32 @@ refreshFilling();
 setInterval(refreshFilling, 8000);
 
 // ── APPLY BADGE COUNTER ───────────────────────
-let _applyCount = 53;
+let _applyCount = Math.floor(Math.random() * 16) + 48; // 48–63 on load
+
+function applyBadgeText(n) {
+  const r = 300 - n;
+  const lang = currentLang;
+  if (lang === 'zh-TW') return `已收到 ${n} 份申請 · 剩餘 ${r} 個名額`;
+  if (lang === 'zh-CN') return `已收到 ${n} 份申请 · 剩余 ${r} 个名额`;
+  if (lang === 'ja')    return `申請 ${n} 件受付 · 残り ${r} 枠`;
+  if (lang === 'ko')    return `신청 ${n}건 접수 · ${r}자리 남음`;
+  if (lang === 'vi')    return `Nhận ${n} đơn · Còn ${r} chỗ`;
+  if (lang === 'th')    return `รับ ${n} ใบสมัคร · เหลือ ${r} ที่นั่ง`;
+  if (lang === 'id')    return `${n} Lamaran Diterima · ${r} Tempat Tersisa`;
+  if (lang === 'es')    return `${n} solicitudes recibidas · ${r} lugares restantes`;
+  if (lang === 'fr')    return `${n} candidatures reçues · ${r} places restantes`;
+  return `${n} Applications Received · ${r} Spots Remaining`;
+}
+
+function updateApplyBadge() {
+  const text = applyBadgeText(_applyCount);
+  document.querySelectorAll('[data-i18n="apply_badge"]').forEach(el => el.textContent = text);
+}
+
 function tickApplyCount() {
   if (Math.random() < 0.4) {
     _applyCount = Math.min(_applyCount + 1, 280);
-    const remaining = 300 - _applyCount;
-    document.querySelectorAll('[data-i18n="apply_badge"]').forEach(el => {
-      const lang = currentLang;
-      if (lang === 'en') el.textContent = `${_applyCount} Applications Received · ${remaining} Spots Remaining`;
-      else if (lang === 'zh-CN') el.textContent = `已收到 ${_applyCount} 份申请 · 剩余 ${remaining} 个名额`;
-      else el.textContent = `已收到 ${_applyCount} 份申請 · 剩餘 ${remaining} 個名額`;
-    });
+    updateApplyBadge();
   }
 }
 setInterval(tickApplyCount, 30000);
