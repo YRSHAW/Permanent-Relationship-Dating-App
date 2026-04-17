@@ -558,8 +558,10 @@ footer a:hover { color: rgba(255,255,255,0.7); }
   .hero { padding: 80px 4% 50px; }
   .features, .who-section, .testimonials, .apply-section { padding: 70px 4%; }
   .hero-carousel { width: 300px; }
-  .hero-card-wrap { width: 300px; }
+  .hero-card-wrap { width: 300px; overflow-y: visible; }
   .hero-card-area { max-width: 340px; }
+  #heroCardContainer > div { aspect-ratio: unset !important; min-height: 440px; }
+  .excl-card { aspect-ratio: unset !important; min-height: 440px; }
   .carousel-arrows { left: -44px; right: -44px; }
   .hero-pivot-full { padding: 0 4%; box-sizing: border-box; }
   .pivot-line { display: none; }
